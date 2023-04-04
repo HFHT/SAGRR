@@ -3,8 +3,8 @@ include_once '../inc/functions.php';
 sec_session_start();
 include_once '../inc/db_connect.php';
 
-error_reporting(E_ALL & ~E_NOTICE);
-ini_set("display_errors", 1);
+// error_reporting(E_ALL & ~E_NOTICE);
+// ini_set("display_errors", 1);
 
 $error = false;
 $row = array();

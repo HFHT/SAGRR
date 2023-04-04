@@ -16,7 +16,7 @@ if (isset($_GET['x'])) {
 	if ($stmt = $mysqli->query($prep_stmt)) {
 		$row = myFetch($stmt);
 		if (isset($row[0]['applApproveDate'])) {
-			$prevAppMsg = '<p><b>Previously '.($row[0]['applApproved']=='Y'?'Approved' : 'Not approved').'</b> by '.$row[0]['applApprovedBy'].' on '.$row[0]['applApproveDate'].'</p>';
+			$prevAppMsg = '<p style="font-size: 1em; color:#38c"><b>Previously '.($row[0]['applApproved']=='Y'?'Approved' : 'Not approved').'</b> by '.$row[0]['applApprovedBy'].' on '.$row[0]['applApproveDate'].'</p>';
 			$applApproveDate = $row[0]['applApproveDate'];
 		} else {
 			$applApproveDate = $today;
@@ -66,7 +66,7 @@ var_dump($row[0]);
 			<ul data-role="listview" data-autodividers="false" data-filter="false">
 			<li>
 				<h3>Applicant Approval</h3>
-				<div class="my-left-8"><?php echo $prevAppMsg;?><p><b><i><span id="apprBy"><?php echo $row[0]['applApprovedBy'];?></span></i></b> has reviewed the: <ul style="padding-left:30px;"><li>application and</li><li>results of the home visit</li></ul><br>I approve this request for adoption of a Golden.</p></div>
+				<div class="my-left-8"><?php echo $prevAppMsg;?><p style="font-size: 1em"><b><i><span id="apprBy"><?php echo $row[0]['applApprovedBy'];?></span></i></b> has reviewed the: <ul style="padding-left:30px;"><li>application and</li><li>results of the home visit</li></ul><br>I approve this request for adoption of a Golden.</p></div>
 				<fieldset data-role="controlgroup" data-type="horizontal" data-mini="true" class="xxxyyy">
 					<input type="radio" name="applApproved" id="applApprovedY" class="applAppDisable" value="Y" <?php checkBox($row[0]['applApproved']=='Y');?> ><label for="applApprovedY">Approved</label>
 					<input type="radio" name="applApproved" id="applApprovedN" class="applAppDisable" value="N" <?php checkBox($row[0]['applApproved']=='N');?>><label for="applApprovedN">Not Approved</label>

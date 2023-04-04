@@ -4,6 +4,7 @@
 [ ] dbPrep, saveMedia, saveApplContact, saveAdopt - FILTER_SANITIZE_STRING is deprecated
 [ ] Test saveAdopt, saveAdoption, memSpawn, ListGroup, filterApp
 [ ] functions - $password not defined 
+[ ] Dog - click on Family and it hangs
 
 $oneMonthOn = new DateTime();
 $oneMonthOn->add(new DateInterval('P30D'));

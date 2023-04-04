@@ -89,7 +89,7 @@ var_dump($prep_stmt);
 	<?php
 	} else {
 	?>
-		<ul data-role="listview" id="adopt_list" data-autodividers="false" data-filter="true" style="">
+		<ul data-role="listview" id="adopt_list" data-autodividers="false" data-filter="true">
 			<?php
 				if ($stmt->num_rows == 0) { 
 					$ary_msgs = array("No Requests matching search criteria."); ?>
