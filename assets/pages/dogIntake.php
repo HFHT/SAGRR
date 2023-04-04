@@ -35,7 +35,7 @@ if ($_GET['x']!='') {
 					$lastThree = $lastThree+1;
 					$lastThree = '000000'.$lastThree;
 					$lastThree = substr($lastThree,(strlen($lastThree)-3));
-					$row[0]['SAGRR_id']=substr($DogId[MaxDog],0,3).$lastThree;
+					$row[0]['SAGRR_id']=substr($DogId['MaxDog'],0,3).$lastThree;
 				} else {
 					echo '3';
 					$row[0]['SAGRR_id']='';

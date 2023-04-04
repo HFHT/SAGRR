@@ -42,8 +42,8 @@ function hide($decision) {
 <html> 
 <head> 
 <?php
-var_dump($prep_stmt);
-var_dump($row[0]);
+// var_dump($prep_stmt);
+// var_dump($row[0]);
 ?>
 </head>
 <body>
