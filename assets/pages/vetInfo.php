@@ -91,15 +91,15 @@ function email($email) {
 			<li>
 			<table style="border-spacing:0;width:100%" id="vetInfoTab">
 				<tbody>
-					<tr><td colspan="2"><textarea name="vetClinic" id="vetClinic" data-mini="true" placeholder="Clinic Name..."><?php echo $row[0][vetClinic]; ?></textarea></td></tr>
-					<tr><td colspan="2"><textarea name="vetAddress" id="vetAddress" data-mini="true" placeholder="Address..."><?php echo $row[0][vetAddress]; ?></textarea></td></tr>
-					<!--tr><td>Clinic*:</td><td><input type="text" name="vetClinic" id="vetClinic" size = "20" class="my-input-text" placeholder="Clinic Name..." required value="<?php echo $row[0][vetClinic] ?>" data-mini="true"></td></tr-->
-					<tr><td width="30%">Short Name*:</td><td><input type="text" name="SelText" id="SelText" size = "20" class="my-input-text" placeholder="Drop down..." required value="<?php echo $row[0][SelText] ?>" data-mini="true"></td></tr>
-					<tr><td>Email:<?php email($row[0][vetEmail])?></td><td><input type="email" name="vetEmail" id="vetEmail" size = "20" class="my-input-text" placeholder="Email Address..." value="<?php echo $row[0][vetEmail] ?>" data-mini="true"></td></tr>
-					<tr><td>Phone*:<?php phone($row[0][vetPhone])?></td><td><input type="tel" name="vetPhone" id="vetPhone" size = "20" class="my-input-text" placeholder="(   )___-___" required value="<?php echo $row[0][vetPhone] ?>" data-mini="true"></td></tr>
-					<tr><td style="white-space:pre-wrap;">Emergency Phone:<?php phone($row[0][vetEmergencyPhone])?></td><td><input type="tel" name="vetEmergencyPhone" id="vetEmergencyPhone" size = "20" class="my-input-text" placeholder="(   )___-___" value="<?php echo $row[0][vetEmergencyPhone] ?>" data-mini="true"></td></tr>
-					<!--tr><td>Address:</td><td><input type="text" name="vetAddress" id="vetAddress" size = "20" class="my-input-text" placeholder="Address..."  value="<?php echo $row[0][vetAddress] ?>" data-mini="true"></td></tr-->
-					<tr><td>Contact(s):</td><td><input type="text" name="vetContact" id="vetContact" size="20" value="<?php echo $row[0][vetContact] ?>" data-mini="true"></td></tr>
+					<tr><td colspan="2"><textarea name="vetClinic" id="vetClinic" data-mini="true" placeholder="Clinic Name..."><?php echo $row[0]['vetClinic']; ?></textarea></td></tr>
+					<tr><td colspan="2"><textarea name="vetAddress" id="vetAddress" data-mini="true" placeholder="Address..."><?php echo $row[0]['vetAddress']; ?></textarea></td></tr>
+					<!--tr><td>Clinic*:</td><td><input type="text" name="vetClinic" id="vetClinic" size = "20" class="my-input-text" placeholder="Clinic Name..." required value="<?php echo $row[0]['vetClinic'] ?>" data-mini="true"></td></tr-->
+					<tr><td width="30%">Short Name*:</td><td><input type="text" name="SelText" id="SelText" size = "20" class="my-input-text" placeholder="Drop down..." required value="<?php echo $row[0]['SelText'] ?>" data-mini="true"></td></tr>
+					<tr><td>Email:<?php email($row[0]['vetEmail'])?></td><td><input type="email" name="vetEmail" id="vetEmail" size = "20" class="my-input-text" placeholder="Email Address..." value="<?php echo $row[0]['vetEmail'] ?>" data-mini="true"></td></tr>
+					<tr><td>Phone*:<?php phone($row[0]['vetPhone'])?></td><td><input type="tel" name="vetPhone" id="vetPhone" size = "20" class="my-input-text" placeholder="(   )___-___" required value="<?php echo $row[0]['vetPhone'] ?>" data-mini="true"></td></tr>
+					<tr><td style="white-space:pre-wrap;">Emergency Phone:<?php phone($row[0]['vetEmergencyPhone'])?></td><td><input type="tel" name="vetEmergencyPhone" id="vetEmergencyPhone" size = "20" class="my-input-text" placeholder="(   )___-___" value="<?php echo $row[0]['vetEmergencyPhone'] ?>" data-mini="true"></td></tr>
+					<!--tr><td>Address:</td><td><input type="text" name="vetAddress" id="vetAddress" size = "20" class="my-input-text" placeholder="Address..."  value="<?php echo $row[0]['vetAddress'] ?>" data-mini="true"></td></tr-->
+					<tr><td>Contact(s):</td><td><input type="text" name="vetContact" id="vetContact" size="20" value="<?php echo $row[0]['vetContact'] ?>" data-mini="true"></td></tr>
 				</tbody>
 			</table>
 			</li>

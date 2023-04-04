@@ -50,7 +50,7 @@ if (isset($_GET['l'])) {
 }
 function my_search($needle,$aryHaystack) {
 	foreach($aryHaystack as $mkey=>$mval) {
-		if ($needle==$mval[DogT_id]) {return true;}
+		if ($needle==$mval['DogT_id']) {return true;}
 	}
 	return false;
 }
@@ -72,7 +72,7 @@ var_dump($prep_stmt);
 			<ul>
 				<li class="backBtn"><a href="#" data-icon="back" >Back</a></li>	
 				<li class="cancelBtn"><a href="" data-icon="recycle">Cancel</a></li>	
-				<li class="saveAdoption ApplE" style="display:none"" id="saveAdoption"><a href="#" data-icon="plus" class="myNav ui-btn-icon-right">Save</a></li>
+				<li class="saveAdoption ApplE" style="display:none" id="saveAdoption"><a href="#" data-icon="plus" class="myNav ui-btn-icon-right">Save</a></li>
 			</ul>
 		</div><!-- /navbar -->	
 	</div><!-- /header -->
@@ -100,20 +100,20 @@ var_dump($prep_stmt);
 			<?php
 			if ($dogi>0) {
 			foreach ($dogs as $rcd) {
-				$med = json_decode($rcd[Medical]);
-				$beh = json_decode($rcd[Behaviors]);
-				$b = in_array('19',$beh->{Beh})==true ? 'dog ':'';
-				$b = $b.(in_array('20',$beh->{Beh})==true ? 'cat ':'');
-				$b = $b.(in_array('21',$beh->{Beh})==true ? 'kid ':'');				
+				$med = json_decode($rcd['Medical']);
+				$beh = json_decode($rcd['Behaviors']);
+				$b = in_array('19',$beh->{'Beh'})==true ? 'dog ':'';
+				$b = $b.(in_array('20',$beh->{'Beh'})==true ? 'cat ':'');
+				$b = $b.(in_array('21',$beh->{'Beh'})==true ? 'kid ':'');				
 			?>
 				<li data-icon="arrow-d">
-					<a href="#" data-transition="slide" style="padding:0.5em 1em;background-color:#F0FACF;" class="noDog assigned" data-dogkey="<?php echo $rcd[DogT_id];?>" data-dogname="<?php echo $rcd[DogName];?>">	
+					<a href="#" data-transition="slide" style="padding:0.5em 1em;background-color:#F0FACF;" class="noDog assigned" data-dogkey="<?php echo $rcd['DogT_id'];?>" data-dogname="<?php echo $rcd['DogName'];?>">	
 					<table style="border-spacing:0;width:100%;font-weight:400;font-size:.9em"><tbody>
-					<tr><td style="font-weight:600"><?php echo $rcd[DogName]; ?>&nbsp;&nbsp; #: <?php echo $rcd[SAGRR_id]; ?></td></tr>
-					<tr><td>Status: <?php echo $rcd[DogProcStatus]; ?> : <?php echo $rcd[DogCurStatus]; ?></td></tr>
-					<tr><td>Age: <?php echo $rcd[age]; ?>,&nbsp;Sex: <?php echo $rcd[DogSex]; ?>,&nbsp;Color: <?php echo $rcd[fk_ColorT_id]=='0' ? '' : $rcd['color']; ?>,&nbsp;Medical: <?php echo $med->{MedicalClass}; ?></td></tr>
+					<tr><td style="font-weight:600"><?php echo $rcd['DogName']; ?>&nbsp;&nbsp; #: <?php echo $rcd['SAGRR_id']; ?></td></tr>
+					<tr><td>Status: <?php echo $rcd['DogProcStatus']; ?> : <?php echo $rcd['DogCurStatus']; ?></td></tr>
+					<tr><td>Age: <?php echo $rcd['age']; ?>,&nbsp;Sex: <?php echo $rcd['DogSex']; ?>,&nbsp;Color: <?php echo $rcd['fk_ColorT_id']=='0' ? '' : $rcd['color']; ?>,&nbsp;Medical: <?php echo $med->{'MedicalClass'}; ?></td></tr>
 					<tr><td>Good With: <?php echo $b; ?></td></tr>
-					<tr><td style="font-size:.8em"><?php echo $rcd[DogBlob]; ?>
+					<tr><td style="font-size:.8em"><?php echo $rcd['DogBlob']; ?>
 					</tbody></table>
 				</a></li>						
 			<?php	
@@ -127,20 +127,20 @@ var_dump($prep_stmt);
 				<?php
 				foreach ($adopt as $key=>$rcd) {
 					if (my_search($rcd['DogT_id'],$dogs)==false) {
-						$med = json_decode($rcd[Medical]);
-						$beh = json_decode($rcd[Behaviors]);
-						$b = in_array('19',$beh->{Beh})==true ? 'dog ':'';
-						$b = $b.(in_array('20',$beh->{Beh})==true ? 'cat ':'');
-						$b = $b.(in_array('21',$beh->{Beh})==true ? 'kid ':'');				
+						$med = json_decode($rcd['Medical']);
+						$beh = json_decode($rcd['Behaviors']);
+						$b = in_array('19',$beh->{'Beh'})==true ? 'dog ':'';
+						$b = $b.(in_array('20',$beh->{'Beh'})==true ? 'cat ':'');
+						$b = $b.(in_array('21',$beh->{'Beh'})==true ? 'kid ':'');				
 				?>
 				<li data-icon="arrow-u" data-inarray="<?php echo in_array($rcd['DogT_id'],$dogs[0])==false?'F':'T'; ?>">
-					<a href="#" data-transition="slide" style="padding:0.5em 1em;" class="yesDog available" data-dogkey="<?php echo $rcd[DogT_id];?>" data-dogname="<?php echo $rcd[DogName];?>">	
+					<a href="#" data-transition="slide" style="padding:0.5em 1em;" class="yesDog available" data-dogkey="<?php echo $rcd['DogT_id'];?>" data-dogname="<?php echo $rcd['DogName'];?>">	
 					<table style="border-spacing:0;width:100%;font-weight:400;font-size:.9em"><tbody>
-					<tr><td style="font-weight:600"><?php echo $rcd[DogName]; ?>&nbsp;&nbsp; #: <?php echo $rcd[SAGRR_id]; ?></td></tr>
-					<tr><td>Status: <?php echo $rcd[DogProcStatus]; ?> : <?php echo $rcd[DogCurStatus]; ?></td></tr>
-					<tr><td>Age: <?php echo $rcd[age]; ?>,&nbsp;Sex: <?php echo $rcd[DogSex]; ?>,&nbsp;Color: <?php echo $rcd[fk_ColorT_id]=='0' ? '' : $rcd['color']; ?>,&nbsp;Medical: <?php echo $med->{MedicalClass}; ?></td></tr>
+					<tr><td style="font-weight:600"><?php echo $rcd['DogName']; ?>&nbsp;&nbsp; #: <?php echo $rcd['SAGRR_id']; ?></td></tr>
+					<tr><td>Status: <?php echo $rcd['DogProcStatus']; ?> : <?php echo $rcd['DogCurStatus']; ?></td></tr>
+					<tr><td>Age: <?php echo $rcd['age']; ?>,&nbsp;Sex: <?php echo $rcd['DogSex']; ?>,&nbsp;Color: <?php echo $rcd['fk_ColorT_id']=='0' ? '' : $rcd['color']; ?>,&nbsp;Medical: <?php echo $med->{'MedicalClass'}; ?></td></tr>
 					<tr><td>Good With: <?php echo $b;?></td></tr>
-					<tr><td style="font-size:.8em"><?php echo $rcd[DogBlob]; ?>
+					<tr><td style="font-size:.8em"><?php echo $rcd['DogBlob']; ?>
 					</tbody></table>
 				</a></li>						
 			<?php 
@@ -219,7 +219,7 @@ var_dump($prep_stmt);
 		<h1>Update Successful</h1>
 		</div>
 		<div data-theme="a">
-			<p><?php echo $row[0][FirstName] ?>'s record was successfully updated.</p>
+			<p><?php echo $row[0]['FirstName'] ?>'s record was successfully updated.</p>
 			<a href="#" data-rel="back" data-icon="delete" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-a">Close</a>			
 		</div>
 	</div> <!-- /popup -->
@@ -229,7 +229,7 @@ var_dump($prep_stmt);
 		<h1>Update Failed!</h1>
 		</div>
 		<div data-theme="a">
-			<p>The update for <?php echo $row[0][FirstName] ?> failed, please try again later!</p>
+			<p>The update for <?php echo $row[0]['FirstName'] ?> failed, please try again later!</p>
 			<p id="adoptionErrorText" class="myErrMsg"></p>
 			<a href="#" data-rel="back" data-icon="delete" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b">Close</a>
 		</div>

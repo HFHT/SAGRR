@@ -201,7 +201,7 @@ function hideShow($choice)
 						<li><a href="/assets/pages/mediaList.php?x=0&m=appl&v=0&d=&r=&f=<?php echo $id ?>&s=s" data-transition="slide" style="padding:0.5em 1em;">
 								Media Attachments<span class="ui-li-count"><?php echo $mediaCnt[0] ?></span></a>
 						</li>
-						<li><a href="/assets/pages/memContact.php?x=<?php echo $id ?>&n=<?php echo $contact->{FName} ?>&m=appl&l=<?php echo $_GET['l']; ?>&q=<?php echo $_GET['q']; ?>" data-transition="slide" style="padding:0.5em 1em;">
+						<li><a href="/assets/pages/memContact.php?x=<?php echo $id ?>&n=<?php echo $contact->{'FName'} ?>&m=appl&l=<?php echo $_GET['l']; ?>&q=<?php echo $_GET['q']; ?>" data-transition="slide" style="padding:0.5em 1em;">
 								Contact Log<span class="ui-li-count"><?php echo $contactCnt[0] ?></span></a>
 						</li>
 						<li><a href="/assets/pages/adoptDog.php?x=1&n=<?php echo $contact->{'FName'} ?>&l=okt&q=<?php echo $id ?>&s=<?php echo $row[0]['applState']; ?>&a=<?php echo $dogQty; ?>" data-transition="slide" style="padding:0.5em 1em;">

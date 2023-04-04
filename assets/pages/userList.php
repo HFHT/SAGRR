@@ -72,20 +72,20 @@ var_dump($prep_stmt);
 				} else {
 					foreach ($row as $rcd) {
 					$role = new StdClass();
-					$role = json_decode($rcd[Role]);
+					$role = json_decode($rcd['Role']);
 				?>
 					<li>
-					<a href="/assets/pages/user.php?x=<?php echo $rcd[username]; ?>&l=<?php echo $_GET['l']; ?>&q=<?php echo $_GET['q']; ?>" style="padding-bottom:0.7em;padding-top:0" data-transition="slide">
-					<h3><?php echo $rcd[memname]; ?></h3>
-					<h3><?php echo $rcd[email]; ?></h3>
-					<p>Linked Member: <?php echo $rcd[LastName]=='' ? '' : $rcd[LastName].', '.$rcd[FirstName]; ?>
-					<br>First Access: <?php echo $rcd[BeginDate]; ?>
-					<br>Last Access: <?php echo $rcd[LastLogin]; ?>
-					<br>Access Count: <?php echo $rcd[LoginCnt]; ?>
+					<a href="/assets/pages/user.php?x=<?php echo $rcd['username']; ?>&l=<?php echo $_GET['l']; ?>&q=<?php echo $_GET['q']; ?>" style="padding-bottom:0.7em;padding-top:0" data-transition="slide">
+					<h3><?php echo $rcd['memname']; ?></h3>
+					<h3><?php echo $rcd['email']; ?></h3>
+					<p>Linked Member: <?php echo $rcd['LastName']=='' ? '' : $rcd['LastName'].', '.$rcd['FirstName']; ?>
+					<br>First Access: <?php echo $rcd['BeginDate']; ?>
+					<br>Last Access: <?php echo $rcd['LastLogin']; ?>
+					<br>Access Count: <?php echo $rcd['LoginCnt']; ?>
 					<br>Editor Rights: <?php echo $role->{'Self'}=='Y'?'Self ':''; echo $role->{'Dog'}=='Y'?'Dog ':''; echo $role->{'Mem'}=='Y'?'Member ':''; echo $role->{'App'}=='Y'?'Approval ':''; echo $role->{'Admin'}=='Y'?'Admin ':''; ?>
-					<?php if ($rcd[Locked]=='Y') { ?>
-						<br>Locked on: <?php echo $rcd[LockedDate]; ?>
-						<br>Reason: <?php echo $rcd[LockedReason]; ?>
+					<?php if ($rcd['Locked']=='Y') { ?>
+						<br>Locked on: <?php echo $rcd['LockedDate']; ?>
+						<br>Reason: <?php echo $rcd['LockedReason']; ?>
 					<?php } ?>
 					</p></a></li>						
 			<?php	

@@ -73,16 +73,16 @@ var_dump($_GET);
 	<?php
 	} else {
 	?>
-		<ul data-role="listview" id="wishlist" data-autodividers="false" data-filter="true" style="">
+		<ul data-role="listview" id="wishlist" data-autodividers="false" data-filter="true">
 			<?php
 				foreach ($row as $rcd) {
 				?>
 					<li style="padding-bottom:0.1em;padding-top:0.2em">
-					<a href="/assets/pages/wish.php?x=<?php echo $rcd[w_id]; ?>&l=&q=&s=" style="padding-bottom:0;padding-top:0" data-transition="slide">
-					<h3><?php echo $rcd[w_by]; ?>&nbsp;&nbsp; <?php echo $rcd[w_date]; ?></h3>
-					<p>Priority: <?php echo $rcd[w_sev]; ?>&nbsp;&nbsp;Status: <?php echo $rcd[w_status]; ?></p>
-					<p style="white-space:pre-line;"><?php echo $rcd[w_desc];?></p>
-					<p><?php echo $rcd[w_ans];?></p>
+					<a href="/assets/pages/wish.php?x=<?php echo $rcd['w_id']; ?>&l=&q=&s=" style="padding-bottom:0;padding-top:0" data-transition="slide">
+					<h3><?php echo $rcd['w_by']; ?>&nbsp;&nbsp; <?php echo $rcd['w_date']; ?></h3>
+					<p>Priority: <?php echo $rcd['w_sev']; ?>&nbsp;&nbsp;Status: <?php echo $rcd['w_status']; ?></p>
+					<p style="white-space:pre-line;"><?php echo $rcd['w_desc'];?></p>
+					<p><?php echo $rcd['w_ans'];?></p>
 					</a></li>						
 			<?php	
 				}			

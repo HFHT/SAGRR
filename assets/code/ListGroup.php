@@ -7,7 +7,7 @@ $row = array();
 $s= $_POST['SelId'];
 if (isset($s)) {
 	$where = "'\"".$s."\"'";
-	if ($_POST['SelMode']==team) {
+	if ($_POST['SelMode']=='team') {
 		$prep_stmt = "SELECT * FROM PeopleT WHERE INSTR(Teams,$where)>0 ORDER BY LastName,FirstName";
 	} else {
 		$prep_stmt = "SELECT * FROM PeopleT WHERE INSTR(Interests,$where)>0 ORDER BY LastName,FirstName";
@@ -17,11 +17,11 @@ if (isset($s)) {
 		$aryMem = array();
 		foreach ($row as $rcd) {
 			$objMem = new stdClass();
-			$objMem->key = $rcd[PeopleT_id];
-			$objMem->name = $rcd[LastName].', '.$rcd[FirstName];
-			$objMem->id = $rcd[Member_id];
-			$objMem->phone = $rcd[Phone];
-			$objMem->email = $rcd[Email];
+			$objMem->key = $rcd['PeopleT_id'];
+			$objMem->name = $rcd['LastName'].', '.$rcd['FirstName'];
+			$objMem->id = $rcd['Member_id'];
+			$objMem->phone = $rcd['Phone'];
+			$objMem->email = $rcd['Email'];
 			array_push($aryMem,$objMem);
 		}
 	} else {

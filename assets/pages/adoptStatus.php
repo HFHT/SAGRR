@@ -70,7 +70,7 @@ var_dump($prep_stmt);
 						<table><tbody>
 						<tr>
 						<td width="70%"><h3><?php echo $rcd['applProcState'].' &#187 '.$rcd['applProcStatus'];?></h3></td>
-						<td width="30%"><h3><?php echo $rcd[StatusDate] ?></h3></td>
+						<td width="30%"><h3><?php echo $rcd['StatusDate'] ?></h3></td>
 						</tr>
 						</tbody></table>						
 						<p style="margin:0">

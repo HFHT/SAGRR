@@ -90,7 +90,7 @@ function dropDownAry($SelAry,$Selected,$SelText) {
 	<?php
 	} else {
 	?>
-		<ul data-role="listview" id="savemedia_list" data-autodividers="false" data-filter="false" style="">
+		<ul data-role="listview" id="savemedia_list" data-autodividers="false" data-filter="false">
 		<form id="mediaEditForm" class="forms">		
 			<li style="padding-bottom:0.1em;padding-top:0.2em">
 			<div class="ui-grid-solo">

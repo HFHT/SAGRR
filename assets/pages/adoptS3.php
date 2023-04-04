@@ -85,7 +85,7 @@ function dropDownAry($SelAry,$Selected,$SelText) {
 		<form id="adoptS3Form" class="forms">
 			<ul data-role="listview" data-autodividers="false" data-filter="false">
 			<li data-role="list-divider" role="heading" style="font-size:initial;"><h3><?php echo $applProgress[3]-> {'Sec'} ?></h3></li>	
-			<li style="display:">					
+			<li style="display:inline-flex">					
 				<p style="font-size:1em;white-space:pre-line;">Specify Adopt and/or Foster: </p>
 					<fieldset data-role="controlgroup" data-type="horizontal" data-mini="true" style="margin-top:0px;margin-bottom:0px;">
 						<input type="checkbox" name="Ans23a" id="Ans23aA" value="A" <?php checkBox(in_array('A',$applSec->{'Ans23a'}));?>><label for="Ans23aA">Adopt</label>

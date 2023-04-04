@@ -93,7 +93,7 @@ function OutputName($s,$j,$k,$m) {
 	<?php
 	} else {
 	?>
-		<ul data-role="listview" id="doglist" data-autodividers="false" data-filter="true" style="">
+		<ul data-role="listview" id="doglist" data-autodividers="false" data-filter="true">
 			<?php
 				if ($stmt->num_rows == 0) { 
 					$ary_msgs = array("No Dogs matching search criteria.","No Dogs assigned to Applicant.","No Dogs assigned to Member."); ?>

@@ -13,8 +13,8 @@ if (isset($_GET['x'])) {
 	if ($stmt = $mysqli->query($prep_stmt)) {
 		$row = myFetch($stmt);
 		$applProgress = json_decode($row[0]['applProgress']);
-		$contact = json_decode($row[0][applContact]);
-		$source = json_decode($row[0][applSource]);			
+		$contact = json_decode($row[0]['applContact']);
+		$source = json_decode($row[0]['applSource']);			
 	} else {
         $error = true;;
     }
@@ -63,7 +63,7 @@ var_dump($applProgress);
 	} else {
 	?>
 		<ul data-role="listview" id="adopt_info" data-autodividers="false" data-filter="false">
-			<li data-role="list-divider" role="heading" style="font-size:initial;"><h3>Family: <?php echo $contact->{LName}.', '.$contact->{FName};?>&nbsp;&nbsp;Dated:&nbsp;<?php echo $row[0]['applDateTime'];?></h3></li>
+			<li data-role="list-divider" role="heading" style="font-size:initial;"><h3>Family: <?php echo $contact->{'LName'}.', '.$contact->{'FName'};?>&nbsp;&nbsp;Dated:&nbsp;<?php echo $row[0]['applDateTime'];?></h3></li>
 			<ol data-role="listview" data-inset="true" style="margin-top:0">
 			<?php 
 			$i=0;
@@ -74,7 +74,7 @@ var_dump($applProgress);
 					$stricon = 'action';
 				}
 			?>
-			<li data-icon=<?php echo $stricon;?>><a href="/assets/pages/adoptS<?php echo $i++;?>.php?x=<?php echo $id ?>&n=<?php echo $contact->{FName}; ?>" data-transition="slide" style="" >	
+			<li data-icon=<?php echo $stricon;?>><a href="/assets/pages/adoptS<?php echo $i++;?>.php?x=<?php echo $id ?>&n=<?php echo $contact->{'FName'}; ?>" data-transition="slide" style="" >	
 				<?php echo $value -> {'Sec'}; ?></a>
 			</li>
 			<?php 

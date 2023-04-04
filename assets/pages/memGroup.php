@@ -104,7 +104,7 @@ function dropDown($DBConn,$DBtable,$Selected) {
 		<h1>Update Successful</h1>
 		</div>
 		<div data-theme="a">
-			<p><?php echo $row[0][FirstName] ?>'s record was successfully updated.</p>
+			<p><?php echo $row[0]['FirstName'] ?>'s record was successfully updated.</p>
 			<a href="#" data-rel="back" data-icon="delete" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-a">Close</a>			
 		</div>
 	</div> <!-- /popup -->

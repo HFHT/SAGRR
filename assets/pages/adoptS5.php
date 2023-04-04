@@ -69,7 +69,7 @@ function dropDownAry($SelAry,$Selected,$SelText) {
 		<form id="adoptS5Form" class="forms">
 			<ul data-role="listview" data-autodividers="false" data-filter="false">
 			<li data-role="list-divider" role="heading" style="font-size:initial;"><h3><?php echo $applProgress[5]-> {'Sec'} ?></h3></li>
-			<li style="display:none;>
+			<li style="display:none">
 				<p style="font-size:1em;white-space:pre-line;">Upon recommendation from SAGRR, are you willing to use a recommended dog trainer for your Golden?</p>
 					<fieldset data-role="controlgroup" data-type="horizontal" data-mini="true" style="margin-top:0px;margin-bottom:0px;">
 						<input type="radio" name="Ans42" id="Ans42Y" value="Y" <?php checkBox($applSec->{'Ans42'}=='Y');?>><label for="Ans42Y">Yes</label>

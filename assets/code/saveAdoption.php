@@ -24,19 +24,19 @@ $error_sql = '';
 if (isset($_POST['formData'])) {
 //	$state = '';
 	$formData = json_decode($_POST['formData']);
-	$fk_applid 		= $formData->{fk_applid};
-	$fk_PeopleT_id	= $formData->{fk_PeopleT_id};
-	$createBy		= $formData->{createBy};
-	$applmode		= $formData->{applmode};										// oka - Adoption, okf - Fostering
-	$family			= $formData->{family};
-	$priorState		= $formData->{state};
-	$dogcnt			= $formData->{dogcnt};
-	$memorappl		= $formData->{memorappl};	
-	$dogCntAfter 	= $dogcnt+sizeof($formData->{DogList})-sizeof($formData->{RetList});
+	$fk_applid 		= $formData->{'fk_applid'};
+	$fk_PeopleT_id	= $formData->{'fk_PeopleT_id'};
+	$createBy		= $formData->{'createBy'};
+	$applmode		= $formData->{'applmode'};										// oka - Adoption, okf - Fostering
+	$family			= $formData->{'family'};
+	$priorState		= $formData->{'state'};
+	$dogcnt			= $formData->{'dogcnt'};
+	$memorappl		= $formData->{'memorappl'};	
+	$dogCntAfter 	= $dogcnt+sizeof($formData->{'DogList'})-sizeof($formData->{'RetList'});
 	$foraStatus		= $arySQL[$applmode][0];
 	$foraAvail		= $arySQL[$applmode][1];
-	$applState		= $aryAppl[$formData->{applcomp}][$applmode][0];
-	$applStatus		= $aryAppl[$formData->{applcomp}][$applmode][1];
+	$applState		= $aryAppl[$formData->{'applcomp'}][$applmode][0];
+	$applStatus		= $aryAppl[$formData->{'applcomp'}][$applmode][1];
 	if ($dogCntAfter>0 && $priorState=='Complete') {								// Override state if the applicant still has a dog
 		$applState = 'Complete';
 	}
@@ -45,7 +45,7 @@ if (isset($_POST['formData'])) {
 //		$foraAvail		= $arySQL['return'][1];		
 //	}
 	try {
-		$strmsg1 = sizeof($formData->{DogList})==0 ? "$family " : "$family $foraStatus: ";
+		$strmsg1 = sizeof($formData->{'DogList'})==0 ? "$family " : "$family $foraStatus: ";
 //		if ($applmode=='oka') {
 //			if (sizeof($formData->{DogList})==0) {
 //				$status = 'WaitList';
@@ -59,9 +59,9 @@ if (isset($_POST['formData'])) {
 //			$status = 'Matched-Foster';
 //		}
 
-		foreach ($formData->{DogList} as $dogid) {
-			$dogkey = $dogid->{dogkey};
-			$dogname = $dogid->{dogname};
+		foreach ($formData->{'DogList'} as $dogid) {
+			$dogkey = $dogid->{'dogkey'};
+			$dogname = $dogid->{'dogname'};
 			$strmsg1 = $strmsg1.$dogname.' ';
 //			$memorappl = $memorappl=='fk_PeopleT_id' ? $memorappl : 'fk_applid';
 			if ($memorappl=='fk_PeopleT_id') {
@@ -75,23 +75,23 @@ if (isset($_POST['formData'])) {
 			}
 			$prep_stmt="INSERT INTO DStatusTrackT ". 
 				"(fk_DogT_id,StatusDate,DogProcStatus,DogCurStatus,applProcStatus,fk_PeopleT_id,createBy,StatusComment) VALUES ".
-				"(".$dogid->{dogkey}.",CURDATE(),'$foraStatus','$foraAvail','X',$fk_PeopleT_id,'$createBy','Created by adoption processing. $family $foraStatus $dogname.')";
+				"(".$dogid->{'dogkey'}.",CURDATE(),'$foraStatus','$foraAvail','X',$fk_PeopleT_id,'$createBy','Created by adoption processing. $family $foraStatus $dogname.')";
 			$error_sql = $prep_stmt;
 			if (!$mysqli->query($prep_stmt)) {
 				throw new RuntimeException("Update of Status id: $dogkey failed");
 			}
 		}
-		$strmsg2 = sizeof($formData->{RetList})==0 ? "" : "- Returned: ";	
-		foreach ($formData->{RetList} as $dogid) {
-			$dogkey = $dogid->{dogkey};
-			$dogname = $dogid->{dogname};
+		$strmsg2 = sizeof($formData->{'RetList'})==0 ? "" : "- Returned: ";	
+		foreach ($formData->{'RetList'} as $dogid) {
+			$dogkey = $dogid->{'dogkey'};
+			$dogname = $dogid->{'dogname'};
 			$strmsg2 = $strmsg2.$dogname.' ';
 			if (!$mysqli->query("UPDATE DogT SET DogProcStatus='InProcess',DogCurStatus='Available',fk_applid=0,fk_PeopleT_id=0 WHERE DogT_id=$dogkey")) {
 				throw new RuntimeException("Update of Dog Return id: $dogkey failed");
 			}
 			$prep_stmt="INSERT INTO DStatusTrackT ". 
 				"(fk_DogT_id,StatusDate,DogProcStatus,DogCurStatus,applProcStatus,fk_PeopleT_id,createBy,StatusComment) VALUES ".
-				"(".$dogid->{dogkey}.",CURDATE(),'InProcess','Available','X',$fk_PeopleT_id,'$createBy','Created by adoption return processing. $family returned $dogname.')";
+				"(".$dogid->{'dogkey'}.",CURDATE(),'InProcess','Available','X',$fk_PeopleT_id,'$createBy','Created by adoption return processing. $family returned $dogname.')";
 			$error_sql = $prep_stmt;
 			if (!$mysqli->query($prep_stmt)) {
 				throw new RuntimeException("Update of Return Status id: $dogkey failed");
@@ -123,7 +123,7 @@ $results = array(
 	'error_sql' => $error_sql,
 	'error_str' => $error_str,
 	'error_msg' => $error_msg),
-'data' =>  $aryAppl[$formData->{applcomp}][$applmode][0].' '.$aryAppl[$formData->{applcomp}][$applmode][1].' '.$priorState.' '.$dogcnt.' '.$dogCntAfter);
+'data' =>  $aryAppl[$formData->{'applcomp'}][$applmode][0].' '.$aryAppl[$formData->{'applcomp'}][$applmode][1].' '.$priorState.' '.$dogcnt.' '.$dogCntAfter);
 echo json_encode($results);
 //var_dump($aryAppl);
 $mysqli->close();

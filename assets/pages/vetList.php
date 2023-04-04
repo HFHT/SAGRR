@@ -61,15 +61,15 @@ if (isset($_GET['l'])) {
 	<?php
 	} else {
 	?>
-		<ul data-role="listview" id="vet_list" data-autodividers="false" data-filter="true" style="">
+		<ul data-role="listview" id="vet_list" data-autodividers="false" data-filter="true">
 			<?php
 				foreach ($row as $rcd) {
 				?>
 					<li>
-					<a href="/assets/pages/vet.php?x=<?php echo $rcd[SelId]; ?>&l=<?php echo $_GET['l']; ?>&q=<?php echo $_GET['q']; ?>" style="padding-bottom:0.7em;padding-top:0" data-transition="slide">
-					<h3><?php echo $rcd[vetClinic]; ?></h3>
-					<p>Phone: <?php echo $rcd[vetPhone]; ?>
-					<br><?php echo $rcd[vetAddress]; ?>
+					<a href="/assets/pages/vet.php?x=<?php echo $rcd['SelId']; ?>&l=<?php echo $_GET['l']; ?>&q=<?php echo $_GET['q']; ?>" style="padding-bottom:0.7em;padding-top:0" data-transition="slide">
+					<h3><?php echo $rcd['vetClinic']; ?></h3>
+					<p>Phone: <?php echo $rcd['vetPhone']; ?>
+					<br><?php echo $rcd['vetAddress']; ?>
 					</p></a></li>						
 			<?php	
 				}			

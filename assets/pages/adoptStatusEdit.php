@@ -72,7 +72,7 @@ function dropDown($DBConn,$Selected,$dropSQL) {
 <head> 
 <?php
 var_dump($row);
-$memname = $row[0][fk_PeopleT_id]==0?'':$row[0]['LastName'].", ".$row[0]['FirstName'];
+$memname = $row[0]['fk_PeopleT_id']==0?'':$row[0]['LastName'].", ".$row[0]['FirstName'];
 ?>
 </head>
 <body>
@@ -149,7 +149,7 @@ $memname = $row[0][fk_PeopleT_id]==0?'':$row[0]['LastName'].", ".$row[0]['FirstN
 			</li>
 			<?php if ($vid=='0') { ?>
 			<li>
-				<a href="/assets/pages/memSelect.php?m=<?php echo $row[0][fk_PeopleT_id] ?>&n=<?php echo $_GET['n'] ?>&l=visit" data-icon="edit" data-transition="slide">Select Home Visit Volunteer</a></li>					
+				<a href="/assets/pages/memSelect.php?m=<?php echo $row[0]['fk_PeopleT_id'] ?>&n=<?php echo $_GET['n'] ?>&l=visit" data-icon="edit" data-transition="slide">Select Home Visit Volunteer</a></li>					
 			</li>
 			<?php } ?>
 			</ul>

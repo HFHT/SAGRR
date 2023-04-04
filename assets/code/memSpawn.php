@@ -18,18 +18,18 @@ if (isset($_POST['v'])) {
 	if ($result = $mysqli->query($sel_stmt)) {
 		$row = $result->fetch_assoc();
 //		var_dump($row);
-		$contact = json_decode($row[applContact]);
+		$contact = json_decode($row['applContact']);
 //		var_dump($contact);
-		$fn	=	$mysqli->real_escape_string($contact->{FName});
-		$ln	=	$mysqli->real_escape_string($contact->{LName});
-		$on	=	$mysqli->real_escape_string($contact->{OName});
-		$addr = $mysqli->real_escape_string($contact->{Addr});
-		$city = $mysqli->real_escape_string($contact->{City});
-		$sta = $contact->{St};
-		$zip = $contact->{Zip};
-		$Phone = $contact->{Phone};
-		$Cell = $contact->{Cell};
-		$Email = $contact->{Email};
+		$fn	=	$mysqli->real_escape_string($contact->{'FName'});
+		$ln	=	$mysqli->real_escape_string($contact->{'LName'});
+		$on	=	$mysqli->real_escape_string($contact->{'OName'});
+		$addr = $mysqli->real_escape_string($contact->{'Addr'});
+		$city = $mysqli->real_escape_string($contact->{'City'});
+		$sta = $contact->{'St'};
+		$zip = $contact->{'Zip'};
+		$Phone = $contact->{'Phone'};
+		$Cell = $contact->{'Cell'};
+		$Email = $contact->{'Email'};
 		$MemberSince =  date("Y-m-d");
 
 		if (1==1) {

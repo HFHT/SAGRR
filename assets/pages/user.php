@@ -109,7 +109,7 @@ var_dump($row[0]);
 				</tbody></table>
 			</li>
 			<li>
-				<a href="/assets/pages/memSelect.php?m=<?php echo $row[0][fk_PeopleT_id] ?>&n=<?php echo $row[0]['email'] ?>" data-icon="edit" data-transition="slide">Linked to:&nbsp;<span id="memSelected"><?php echo ($row[0]['LastName'].", ".$row[0]['FirstName']) ?></span></a></li>					
+				<a href="/assets/pages/memSelect.php?m=<?php echo $row[0]['fk_PeopleT_id'] ?>&n=<?php echo $row[0]['email'] ?>" data-icon="edit" data-transition="slide">Linked to:&nbsp;<span id="memSelected"><?php echo ($row[0]['LastName'].", ".$row[0]['FirstName']) ?></span></a></li>					
 			</li>			
 			<li>
 				<h3>Permissions</h3>

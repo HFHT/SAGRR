@@ -75,10 +75,10 @@ function ckExpire($d1,$span) {
 			<li>
 			<table style="border-spacing:0;width:100%" id="memInfoTab">
 				<tbody>
-					<tr><td>Member Since:</td><td><input type="date" data-clear-btn="false" name="MemberSince" id="MemberSince" max="<?php echo $today ?>" value="<?php echo $row[0][MemberSince] ?>" data-mini="true"></td></tr>
-					<tr><td>Renewed:</td><td><input type="date" data-clear-btn="false" name="MemberRenewed" id="MemberRenewed" class="my-date" max="<?php echo $today ?>" value="<?php echo $row[0][MemberRenewed] ?>" data-mini="true"></td></tr>				
-					<?php if ($row[0][Membership]=='Inactive') { ?>
-					<tr><td>Inactive:</td><td><input type="date" data-clear-btn="false" name="MemberInactive" id="MemberInactive" class="my-date" max="<?php echo $today ?>" value="<?php echo $row[0][MemberInactive] ?>" data-mini="true"></td></tr>
+					<tr><td>Member Since:</td><td><input type="date" data-clear-btn="false" name="MemberSince" id="MemberSince" max="<?php echo $today ?>" value="<?php echo $row[0]['MemberSince'] ?>" data-mini="true"></td></tr>
+					<tr><td>Renewed:</td><td><input type="date" data-clear-btn="false" name="MemberRenewed" id="MemberRenewed" class="my-date" max="<?php echo $today ?>" value="<?php echo $row[0]['MemberRenewed'] ?>" data-mini="true"></td></tr>				
+					<?php if ($row[0]['Membership']=='Inactive') { ?>
+					<tr><td>Inactive:</td><td><input type="date" data-clear-btn="false" name="MemberInactive" id="MemberInactive" class="my-date" max="<?php echo $today ?>" value="<?php echo $row[0]['MemberInactive'] ?>" data-mini="true"></td></tr>
 					<?php } else { ?>
 					<input type="hidden" name="MemberInactive" id="MemberInactive" value="<?php echo $today ?>">
 					<?php } ?>
@@ -94,7 +94,7 @@ function ckExpire($d1,$span) {
 					<select name="Membership" id="Membership" data-mini="true" required dir="ltr">
 						<?php
 						$aryDrop = ['Non Member','Pending','Active','Inactive'];
-						dropDownAry($aryDrop,$row[0][Membership],' Membership ');
+						dropDownAry($aryDrop,$row[0]['Membership'],' Membership ');
 						?>
 					</select>
 				</td>
@@ -102,7 +102,7 @@ function ckExpire($d1,$span) {
 					<select name="MemberLevel" id="MemberLevel" data-mini="true" required dir="ltr">
 						<?php
 						$aryDrop = ['Basic','Sponsor','Student','Guest'];
-						dropDownAry($aryDrop,$row[0][MemberLevel],' MemberLevel ');
+						dropDownAry($aryDrop,$row[0]['MemberLevel'],' MemberLevel ');
 						?>
 					</select>
 				</td>
@@ -110,22 +110,22 @@ function ckExpire($d1,$span) {
 					<select name="MemCount" id="MemCount" data-mini="true" required dir="ltr">
 						<?php
 						$aryDrop = ['0','1','2','3','4','5','6','7','8'];
-						dropDownAry($aryDrop,$row[0][MemCount],'');
+						dropDownAry($aryDrop,$row[0]['MemCount'],'');
 						?>
 					</select>
 				</td>
 				</tr></tbody></table>
 			</fieldset>			
 			</li>
-			<?php if (ckExpire($row[0]['MemberExpire'],$hardcode_span) || $row[0][Membership]=='Active' || $row[0][Membership]=='Inactive') { ?>						
+			<?php if (ckExpire($row[0]['MemberExpire'],$hardcode_span) || $row[0]['Membership']=='Active' || $row[0]['Membership']=='Inactive') { ?>						
 				<li>
 				<div class="hideMemBtn ui-input-btn ui-btn ui-btn-b data-mini="true"">
-				<?php if (ckExpire($row[0]['MemberExpire'],$hardcode_span) || $row[0][Membership]=='Inactive') { ?>	
+				<?php if (ckExpire($row[0]['MemberExpire'],$hardcode_span) || $row[0]['Membership']=='Inactive') { ?>	
 					<span id="hideMemRenew">
 					<input type="button" name="memMembershipRenew" id="memMembershipRenew" value="Renew Membership" data-mini="false">
 					</span>
 				<?php } ?>
-				<?php if ($row[0][Membership]=='Active') {	?>	
+				<?php if ($row[0]['Membership']=='Active') {	?>	
 					<span id="hideMemInactive">				
 					<input type="button" name="memMembershipInactive" id="memMembershipInactive" value="Go Inactive" data-mini="true">
 					</span>				
@@ -149,8 +149,8 @@ function ckExpire($d1,$span) {
 			<?php
 				foreach ($histRows as $rcd) {
 				?>
-					<tr><td><?php echo $rcd[mRenewDate]?></td><td style="text-align:center"><?php echo $rcd[mMemberShip];?></td>
-					<td style="text-align:center"><?php echo $rcd[mMemberLevel];?></td><td style="text-align:center"><?php echo $rcd[mMemCount];?></td><td><?php echo $rcd[mAction];?></td></tr>
+					<tr><td><?php echo $rcd['mRenewDate']?></td><td style="text-align:center"><?php echo $rcd['mMemberShip'];?></td>
+					<td style="text-align:center"><?php echo $rcd['mMemberLevel'];?></td><td style="text-align:center"><?php echo $rcd['mMemCount'];?></td><td><?php echo $rcd['mAction'];?></td></tr>
 			<?php	
 				}
 			?>
@@ -199,7 +199,7 @@ function ckExpire($d1,$span) {
 		<h1>Update Successful</h1>
 		</div>
 		<div data-theme="a">
-			<p><?php echo $row[0][FirstName] ?>'s record was successfully updated.</p>
+			<p><?php echo $row[0]['FirstName'] ?>'s record was successfully updated.</p>
 			<a href="#" data-rel="back" data-icon="delete" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-a">Close</a>			
 		</div>
 	</div> <!-- /popup -->
@@ -209,7 +209,7 @@ function ckExpire($d1,$span) {
 		<h1>Update Failed!</h1>
 		</div>
 		<div data-theme="a">
-			<p>The update for <?php echo $row[0][FirstName] ?> failed, please try again later!</p>
+			<p>The update for <?php echo $row[0]['FirstName'] ?> failed, please try again later!</p>
 			<p id="memMembershipErrorText" class="myErrMsg"></p>
 			<a href="#" data-rel="back" data-icon="delete" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b">Close</a>
 		</div>

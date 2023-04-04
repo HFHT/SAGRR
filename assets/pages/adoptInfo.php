@@ -15,12 +15,12 @@ if (isset($_GET['x'])) {
 				WHERE applid = $id";
 	if ($stmt = $mysqli->query($prep_stmt)) {
 		$row = myFetch($stmt);
-		$contact = json_decode($row[0][applContact]);
-		if (strpos($contact->{FName},'FirstName')!==false) {
-			$contact->{FName}='';
+		$contact = json_decode($row[0]['applContact']);
+		if (strpos($contact->{'FName'},'FirstName')!==false) {
+			$contact->{'FName'}='';
 		}
-		if (strpos($contact->{LName},'LastName')!==false) {
-			$contact->{LName}='';
+		if (strpos($contact->{'LName'},'LastName')!==false) {
+			$contact->{'LName'}='';
 		}		
 	} else {
         $error = true;
@@ -98,12 +98,12 @@ var_dump($contact);
 		<li>
 			<table style="border-spacing:0;width:100%" id="adoptInfoTab">
 				<table style="border-spacing:0;width:100%;font-weight:400;border-bottom:1pt dotted rgb(196,196,196)"><tbody>
-					<tr><td>Last Name*:</td><td><input type="text" name="LName" id="LName" size = "20" class="my-input-text" placeholder="Last Name..." required value="<?php echo $contact->{LName} ?>" data-mini="true"></td></tr>
-					<tr><td>First Name*:</td><td><input type="text" name="FName" id="FName" size = "20" class="my-input-text" placeholder="First Name..." required value="<?php echo $contact->{FName} ?>" data-mini="true"></td></tr>
-					<tr><td>Family Members:</td><td><input type="text" name="OName" id="OName" size = "20" class="my-input-text" placeholder="Other Family Members..." value="<?php echo $contact->{OName} ?>" data-mini="true"></td></tr>				
-					<tr><td>Email:<?php email($contact->{Email})?></td><td><input type="email" name="Email" id="Email" size = "20" class="my-input-text" placeholder="Email Address..." value="<?php echo $contact->{Email} ?>" data-mini="true"></td></tr>
-					<tr><td>Phone*:<?php phone($contact->{Phone})?></td><td><input type="tel" name="Phone" id="Phone" size = "20" class="my-input-text" placeholder="(   )___-___" required value="<?php echo $contact->{Phone} ?>" pattern="^(?:\([2-9]\d{2}\)\ ?|[2-9]\d{2}(?:\-?|\ ?))[2-9]\d{2}[- ]?\d{4}$" data-mini="true"></td></tr>
-					<tr><td>Cell:<?php phone($contact->{Cell})?></td><td><input type="tel" name="Cell" id="Cell" size = "20" class="my-input-text" placeholder="(   )___-___" value="<?php echo $contact->{Cell} ?>" data-mini="true"></td></tr>
+					<tr><td>Last Name*:</td><td><input type="text" name="LName" id="LName" size = "20" class="my-input-text" placeholder="Last Name..." required value="<?php echo $contact->{'LName'} ?>" data-mini="true"></td></tr>
+					<tr><td>First Name*:</td><td><input type="text" name="FName" id="FName" size = "20" class="my-input-text" placeholder="First Name..." required value="<?php echo $contact->{'FName'} ?>" data-mini="true"></td></tr>
+					<tr><td>Family Members:</td><td><input type="text" name="OName" id="OName" size = "20" class="my-input-text" placeholder="Other Family Members..." value="<?php echo $contact->{'OName'} ?>" data-mini="true"></td></tr>				
+					<tr><td>Email:<?php email($contact->{'Email'})?></td><td><input type="email" name="Email" id="Email" size = "20" class="my-input-text" placeholder="Email Address..." value="<?php echo $contact->{'Email'} ?>" data-mini="true"></td></tr>
+					<tr><td>Phone*:<?php phone($contact->{'Phone'})?></td><td><input type="tel" name="Phone" id="Phone" size = "20" class="my-input-text" placeholder="(   )___-___" required value="<?php echo $contact->{'Phone'} ?>" pattern="^(?:\([2-9]\d{2}\)\ ?|[2-9]\d{2}(?:\-?|\ ?))[2-9]\d{2}[- ]?\d{4}$" data-mini="true"></td></tr>
+					<tr><td>Cell:<?php phone($contact->{'Cell'})?></td><td><input type="tel" name="Cell" id="Cell" size = "20" class="my-input-text" placeholder="(   )___-___" value="<?php echo $contact->{'Cell'} ?>" data-mini="true"></td></tr>
 					<tr><td width="40%">Apply Date:</td><td width="60%"><input type="date" data-clear-btn="false" name="applDateTime" id="applDateTime" max="<?php echo $today ?>" value="<?php echo $row[0]['applDateTime'] ?>" required></td></tr>					
 					</tbody></table>							
 			</table>
@@ -111,24 +111,24 @@ var_dump($contact);
 			<li>
 			<table style="border-spacing:0;width:100%">
 				<tbody>
-					<tr><td>Street:</td><td><input type="text" name="Addr" id="Addr" size = "20" class="my-input-text" placeholder="Street..."  value="<?php echo $contact->{Addr} ?>" data-mini="true"></td></tr>
-					<tr><td>City:</td><td><input type="text" name="City" id="City" size = "20" class="my-input-text" placeholder="City..."  value="<?php echo $contact->{City} ?>" data-mini="true"></td></tr>
+					<tr><td>Street:</td><td><input type="text" name="Addr" id="Addr" size = "20" class="my-input-text" placeholder="Street..."  value="<?php echo $contact->{'Addr'} ?>" data-mini="true"></td></tr>
+					<tr><td>City:</td><td><input type="text" name="City" id="City" size = "20" class="my-input-text" placeholder="City..."  value="<?php echo $contact->{'City'} ?>" data-mini="true"></td></tr>
 					<tr><td>State:</td>
 					<td>
 						<select name="St" id="St" data-mini="true" dir="ltr">
 							<?php
-							dropDownAry($us_state_abbrevs_names,$contact->{St},' Select State ');
+							dropDownAry($us_state_abbrevs_names,$contact->{'St'},' Select State ');
 							?>
 						</select>					
 					</td></tr>
-					<tr><td>Zip:</td><td><input type="number" name="Zip" id="Zip" size = "20" class="my-input-text" placeholder="Zip..." value="<?php echo $contact->{Zip} ?>" data-mini="true"></td></tr>
+					<tr><td>Zip:</td><td><input type="number" name="Zip" id="Zip" size = "20" class="my-input-text" placeholder="Zip..." value="<?php echo $contact->{'Zip'} ?>" data-mini="true"></td></tr>
 				</tbody>
 			</table>			
 			</li>
 			<li>
 			<table style="border-spacing:0;width:100%">
 				<tbody>
-					<tr><td colspan="2"><textarea data-mini="true" rows="4" name="applNote" id="applNote" placeholder="Notes..."><?php echo $row[0][applNote] ?></textarea></td></tr>
+					<tr><td colspan="2"><textarea data-mini="true" rows="4" name="applNote" id="applNote" placeholder="Notes..."><?php echo $row[0]['applNote'] ?></textarea></td></tr>
 				</tbody>
 			</table>			
 			</li>

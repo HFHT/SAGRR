@@ -96,21 +96,21 @@ function email($email) {
 				<tbody>
 					<tr><td rowspan="2">
 					<a href="/assets/pages/media.php?x=<?php echo $id ?>&v=0&m=member&d=0&r=0" data-transition="slide" style="padding:0.5em 1em;" >					
-					<img src="<?php echo $row[0][PhotoLink] ?>"/>
+					<img src="<?php echo $row[0]['PhotoLink'] ?>"/>
 					</a>
-					</td><td><input type="text" name="Member_id" id="Member_id" size="20" class="my-input-text" placeholder="Member ID..." required value="<?php echo $row[0][Member_id] ?>" data-mini="true"></td></tr>
-					<tr><td><input type="text" name="Salutation" id="Salutation" size="20" class="my-input-text" placeholder="Salutation..." value="<?php echo $row[0][Salutation] ?>" data-mini="true" >					
+					</td><td><input type="text" name="Member_id" id="Member_id" size="20" class="my-input-text" placeholder="Member ID..." required value="<?php echo $row[0]['Member_id'] ?>" data-mini="true"></td></tr>
+					<tr><td><input type="text" name="Salutation" id="Salutation" size="20" class="my-input-text" placeholder="Salutation..." value="<?php echo $row[0]['Salutation'] ?>" data-mini="true" >					
 					</td></tr>
-					<tr><td>Last Name*:</td><td><input type="text" name="LastName" id="LastName" size = "20" class="my-input-text" placeholder="Last Name..." required value="<?php echo $row[0][LastName] ?>" data-mini="true"></td></tr>
-					<tr><td>First Name*:</td><td><input type="text" name="FirstName" id="FirstName" size = "20" class="my-input-text" placeholder="First Name..." required value="<?php echo $row[0][FirstName] ?>" data-mini="true"></td></tr>
-					<tr><td>Family Members:</td><td><input type="text" name="OtherName" id="OtherName" size = "20" class="my-input-text" placeholder="Other Family Members..." value="<?php echo $row[0][OtherName] ?>" data-mini="true"></td></tr>
-					<tr><td>Email:<?php email($row[0][Email])?></td><td><input type="email" name="Email" id="Email" size = "20" class="my-input-text" placeholder="Email Address..." value="<?php echo $row[0][Email] ?>" data-mini="true"></td></tr>
-					<tr><td>Phone*:<?php phone($row[0][Phone])?></td><td><input type="tel" name="Phone" id="Phone" size = "20" class="my-input-text" placeholder="(   )___-___" required value="<?php echo $row[0][Phone] ?>" pattern="^(?:\([2-9]\d{2}\)\ ?|[2-9]\d{2}(?:\-?|\ ?))[2-9]\d{2}[- ]?\d{4}$" data-mini="true"></td></tr>
-					<tr><td>Cell:<?php phone($row[0][Cell])?></td><td><input type="tel" name="Cell" id="Cell" size = "20" class="my-input-text" placeholder="(   )___-___" value="<?php echo $row[0][Cell] ?>" data-mini="true"></td></tr>
-					<tr><td>Fax:</td><td><input type="tel" name="Fax" id="Fax" size = "20" class="my-input-text" placeholder="(   )___-___"  value="<?php echo $row[0][Fax] ?>" data-mini="true"></td></tr>
-					<tr><td>Member Since:</td><td><input type="date" data-clear-btn="false" name="MemberSince" id="MemberSince" max="<?php echo $today ?>" value="<?php echo $row[0][MemberSince] ?>" data-mini="true"></td></tr>
-					<tr><td>Renewed:</td><td><input type="date" data-clear-btn="false" name="MemberRenewed" id="MemberRenewed" class="my-date" max="<?php echo $today ?>" value="<?php echo $row[0][MemberRenewed] ?>" data-mini="true"></td></tr>
-					<tr><td colspan="2"><textarea name="MemberQuickNote" cols="50" rows="2" id="MemberQuickNote" placeholder="Quick Note..." data-mini="true"><?php echo $row[0][MemberQuickNote]; ?></textarea></td></tr>
+					<tr><td>Last Name*:</td><td><input type="text" name="LastName" id="LastName" size = "20" class="my-input-text" placeholder="Last Name..." required value="<?php echo $row[0]['LastName'] ?>" data-mini="true"></td></tr>
+					<tr><td>First Name*:</td><td><input type="text" name="FirstName" id="FirstName" size = "20" class="my-input-text" placeholder="First Name..." required value="<?php echo $row[0]['FirstName'] ?>" data-mini="true"></td></tr>
+					<tr><td>Family Members:</td><td><input type="text" name="OtherName" id="OtherName" size = "20" class="my-input-text" placeholder="Other Family Members..." value="<?php echo $row[0]['OtherName'] ?>" data-mini="true"></td></tr>
+					<tr><td>Email:<?php email($row[0]['Email'])?></td><td><input type="email" name="Email" id="Email" size = "20" class="my-input-text" placeholder="Email Address..." value="<?php echo $row[0]['Email'] ?>" data-mini="true"></td></tr>
+					<tr><td>Phone*:<?php phone($row[0]['Phone'])?></td><td><input type="tel" name="Phone" id="Phone" size = "20" class="my-input-text" placeholder="(   )___-___" required value="<?php echo $row[0]['Phone'] ?>" pattern="^(?:\([2-9]\d{2}\)\ ?|[2-9]\d{2}(?:\-?|\ ?))[2-9]\d{2}[- ]?\d{4}$" data-mini="true"></td></tr>
+					<tr><td>Cell:<?php phone($row[0]['Cell'])?></td><td><input type="tel" name="Cell" id="Cell" size = "20" class="my-input-text" placeholder="(   )___-___" value="<?php echo $row[0]['Cell'] ?>" data-mini="true"></td></tr>
+					<tr><td>Fax:</td><td><input type="tel" name="Fax" id="Fax" size = "20" class="my-input-text" placeholder="(   )___-___"  value="<?php echo $row[0]['Fax'] ?>" data-mini="true"></td></tr>
+					<tr><td>Member Since:</td><td><input type="date" data-clear-btn="false" name="MemberSince" id="MemberSince" max="<?php echo $today ?>" value="<?php echo $row[0]['MemberSince'] ?>" data-mini="true"></td></tr>
+					<tr><td>Renewed:</td><td><input type="date" data-clear-btn="false" name="MemberRenewed" id="MemberRenewed" class="my-date" max="<?php echo $today ?>" value="<?php echo $row[0]['MemberRenewed'] ?>" data-mini="true"></td></tr>
+					<tr><td colspan="2"><textarea name="MemberQuickNote" cols="50" rows="2" id="MemberQuickNote" placeholder="Quick Note..." data-mini="true"><?php echo $row[0]['MemberQuickNote']; ?></textarea></td></tr>
 
 				</tbody>
 			</table>
@@ -118,17 +118,17 @@ function email($email) {
 			<li>
 			<table style="border-spacing:0;width:100%">
 				<tbody>
-					<tr><td>Street:</td><td><input type="text" name="Address" id="Address" size = "20" class="my-input-text" placeholder="Street..."  value="<?php echo $row[0][Address] ?>" data-mini="true"></td></tr>
-					<tr><td>City:</td><td><input type="text" name="City" id="City" size = "20" class="my-input-text" placeholder="City..."  value="<?php echo $row[0][City] ?>" data-mini="true"></td></tr>
+					<tr><td>Street:</td><td><input type="text" name="Address" id="Address" size = "20" class="my-input-text" placeholder="Street..."  value="<?php echo $row[0]['Address'] ?>" data-mini="true"></td></tr>
+					<tr><td>City:</td><td><input type="text" name="City" id="City" size = "20" class="my-input-text" placeholder="City..."  value="<?php echo $row[0]['City'] ?>" data-mini="true"></td></tr>
 					<tr><td>State:</td>
 					<td>
 						<select name="StateProvince" id="StateProvince" data-mini="true" dir="ltr">
 							<?php
-							dropDownAry($us_state_abbrevs_names,strtoupper($row[0][StateProvince]),' Select State ');
+							dropDownAry($us_state_abbrevs_names,strtoupper($row[0]['StateProvince']),' Select State ');
 							?>
 						</select>					
 					</td></tr>
-					<tr><td>Zip:</td><td><input type="number" name="MailCode" id="MailCode" size = "20" class="my-input-text" placeholder="Zip..." value="<?php echo $row[0][MailCode] ?>" data-mini="true"></td></tr>
+					<tr><td>Zip:</td><td><input type="number" name="MailCode" id="MailCode" size = "20" class="my-input-text" placeholder="Zip..." value="<?php echo $row[0]['MailCode'] ?>" data-mini="true"></td></tr>
 				</tbody>
 			</table>			
 			</li>

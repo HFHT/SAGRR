@@ -45,7 +45,7 @@ if (isset($_GET['x'])) {
 			<ul data-role="listview" id="mem_update" data-autodividers="false" data-filter="false">
 			<li data-role="list-divider" role="heading" style="font-size:initial;">Skills & Interests for <?php echo $_GET['n'] ?></li>						
 			<li>
-			<textarea name="MemberBlob" id="MemberBlob" data-mini="true"><?php echo $row[0][MemberBlob]; ?></textarea>		
+			<textarea name="MemberBlob" id="MemberBlob" data-mini="true"><?php echo $row[0]['MemberBlob']; ?></textarea>		
 			</li>
 			</ul>
 			<input type="hidden" name="PeopleT_id" id="PeopleT_id" value="<?php echo $id ?>">
@@ -62,7 +62,7 @@ if (isset($_GET['x'])) {
 		<h1>Update Successful</h1>
 		</div>
 		<div data-theme="a">
-			<p><?php echo $row[0][FirstName] ?>'s record was successfully updated.</p>
+			<p><?php echo $row[0]['FirstName'] ?>'s record was successfully updated.</p>
 			<a href="#" data-rel="back" data-icon="delete" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-a">Close</a>			
 		</div>
 	</div> <!-- /popup -->
@@ -72,7 +72,7 @@ if (isset($_GET['x'])) {
 		<h1>Update Failed!</h1>
 		</div>
 		<div data-theme="a">
-			<p>The update for <?php echo $row[0][FirstName] ?> failed, please try again later!</p>
+			<p>The update for <?php echo $row[0]['FirstName'] ?> failed, please try again later!</p>
 			<p id="memSkillErrorText" class="myErrMsg"></p>
 			<a href="#" data-rel="back" data-icon="delete" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b">Close</a>
 		</div>

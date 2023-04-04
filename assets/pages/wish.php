@@ -77,17 +77,17 @@ var_dump($row);
 				<h3>Describe problem or wishlist item</h3>
 				<table style="border-spacing:0;width:100%">
 					<tbody>
-						<tr><td><textarea name="w_desc" id="w_desc" data-mini="true" placeholder="Description..."><?php echo $row[0][w_desc]; ?></textarea></td></tr>
+						<tr><td><textarea name="w_desc" id="w_desc" data-mini="true" placeholder="Description..."><?php echo $row[0]['w_desc']; ?></textarea></td></tr>
 					</tbody>
 				</table>		
 				<h3>Priority</h3>
 				<table style="border-spacing:0;width:100%"><tbody>				
-					<tr><td style="width:50%;">Bug:</td><td><input type="checkbox" data-role="flipswitch" name="w_bug" id="w_bug" data-on-text="Yes" data-off-text="No" data-mini="true" data-wrapper-class="" value="Y" <?php checkBox($row[0][w_bug]=='Y');?>/></td></tr>
+					<tr><td style="width:50%;">Bug:</td><td><input type="checkbox" data-role="flipswitch" name="w_bug" id="w_bug" data-on-text="Yes" data-off-text="No" data-mini="true" data-wrapper-class="" value="Y" <?php checkBox($row[0]['w_bug']=='Y');?>/></td></tr>
 					<tr><td>Priority:</td><td>
 						<select name="w_sev" id="w_sev" data-mini="true">
 							<?php
 							$selOpt = ["1" => "1. High - Showstopper", "2" => "2. Medium - Can workaround", "3" => "3. Low - Inconvenient", "4" => "4. Suggestion - Could help"];
-							dropDownAry($selOpt,$row[0][w_sev],'Select');
+							dropDownAry($selOpt,$row[0]['w_sev'],'Select');
 							?>
 						</select>								
 					</td></tr>
@@ -99,13 +99,13 @@ var_dump($row);
 				<table style="border-spacing:0;width:100%"><tbody>
 					<tr><td>
 						<fieldset id="w_statusBtn" data-role="controlgroup" data-type="horizontal" data-mini="true">
-							<input type="radio" name="w_status" id="SO" value="Open" <?php checkBox($row[0][w_status]=='Open');?> ><label for="SO">Open</label>
-							<input type="radio" name="w_status" id="SW" value="Working" <?php checkBox($row[0][w_status]=='Working');?>><label for="SW">Working</label>
-							<input type="radio" name="w_status" id="SC" value="Closed" <?php checkBox($row[0][w_status]=='Closed');?>><label for="SC">Closed</label>							
-							<input type="radio" name="w_status" id="SR" value="Reject" <?php checkBox($row[0][w_status]=='Reject');?>><label for="SR">Reject</label>							
+							<input type="radio" name="w_status" id="SO" value="Open" <?php checkBox($row[0]['w_status']=='Open');?> ><label for="SO">Open</label>
+							<input type="radio" name="w_status" id="SW" value="Working" <?php checkBox($row[0]['w_status']=='Working');?>><label for="SW">Working</label>
+							<input type="radio" name="w_status" id="SC" value="Closed" <?php checkBox($row[0]['w_status']=='Closed');?>><label for="SC">Closed</label>							
+							<input type="radio" name="w_status" id="SR" value="Reject" <?php checkBox($row[0]['w_status']=='Reject');?>><label for="SR">Reject</label>							
 						</fieldset>
 					</td></tr>
-					<tr><td><textarea name="w_ans" id="w_ans" data-mini="true" placeholder="Response..."><?php echo $row[0][w_ans]; ?></textarea></td></tr>
+					<tr><td><textarea name="w_ans" id="w_ans" data-mini="true" placeholder="Response..."><?php echo $row[0]['w_ans']; ?></textarea></td></tr>
 				</tbody></table>
 			</li>			
 			</ul>

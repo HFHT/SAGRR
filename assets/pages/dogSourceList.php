@@ -57,7 +57,7 @@ if (isset($_GET['l'])) {
 	<?php
 	} else {
 	?>
-		<ul data-role="listview" id="dogSource_list" data-autodividers="false" data-filter="true" style="">
+		<ul data-role="listview" id="dogSource_list" data-autodividers="false" data-filter="true">
 			<?php
 				foreach ($row as $rcd) {
 				?>

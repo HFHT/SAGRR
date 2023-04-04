@@ -12,7 +12,7 @@ if (isset($_GET['x'])) {
     $prep_stmt = "SELECT FirstName,Company,WorkPhone,WorkEmail,Contact,Vet,Title FROM PeopleT WHERE PeopleT_id = $id";
 	if ($stmt = $mysqli->query($prep_stmt)) {
 		$row = myFetch($stmt);
-		if ($row[0][Vet]=='Y') {
+		if ($row[0]['Vet']=='Y') {
 			$strSel = 'checked';
 		} else {
 			$strSel = '';
@@ -52,11 +52,11 @@ if (isset($_GET['x'])) {
 			<li>
 			<table style="border-spacing:0;width:100%" id="memInfoTab">
 				<tbody>
-					<tr><td>Company*:</td><td><input type="text" name="Company" id="Company" size = "20" class="my-input-text" placeholder="Company..." required value="<?php echo $row[0][Company] ?>" data-mini="true"></td></tr>
-					<tr><td>Title:</td><td><input type="text" name="Title" id="Title" size = "20" class="my-input-text" placeholder="Title..."  value="<?php echo $row[0][Title] ?>" data-mini="true"></td></tr>
-					<tr><td>Contact:</td><td><input type="text" name="Contact" id="Contact" size = "20" class="my-input-text" placeholder="Contact Name..."  value="<?php echo $row[0][Contact] ?>" data-mini="true"></td></tr>
-					<tr><td>Work Email:</td><td><input type="email" name="WorkEmail" id="WorkEmail" size = "20" class="my-input-text" placeholder="Email Address..." value="<?php echo $row[0][WorkEmail] ?>" data-mini="true"></td></tr>
-					<tr><td>Work Phone:</td><td><input type="tel" name="WorkPhone" id="WorkPhone" size = "20" class="my-input-text" placeholder="(   )___-___"  value="<?php echo $row[0][WorkPhone] ?>" pattern="^(?:\([2-9]\d{2}\)\ ?|[2-9]\d{2}(?:\-?|\ ?))[2-9]\d{2}[- ]?\d{4}$" data-mini="true"></td></tr>
+					<tr><td>Company*:</td><td><input type="text" name="Company" id="Company" size = "20" class="my-input-text" placeholder="Company..." required value="<?php echo $row[0]['Company'] ?>" data-mini="true"></td></tr>
+					<tr><td>Title:</td><td><input type="text" name="Title" id="Title" size = "20" class="my-input-text" placeholder="Title..."  value="<?php echo $row[0]['Title'] ?>" data-mini="true"></td></tr>
+					<tr><td>Contact:</td><td><input type="text" name="Contact" id="Contact" size = "20" class="my-input-text" placeholder="Contact Name..."  value="<?php echo $row[0]['Contact'] ?>" data-mini="true"></td></tr>
+					<tr><td>Work Email:</td><td><input type="email" name="WorkEmail" id="WorkEmail" size = "20" class="my-input-text" placeholder="Email Address..." value="<?php echo $row[0]['WorkEmail'] ?>" data-mini="true"></td></tr>
+					<tr><td>Work Phone:</td><td><input type="tel" name="WorkPhone" id="WorkPhone" size = "20" class="my-input-text" placeholder="(   )___-___"  value="<?php echo $row[0]['WorkPhone'] ?>" pattern="^(?:\([2-9]\d{2}\)\ ?|[2-9]\d{2}(?:\-?|\ ?))[2-9]\d{2}[- ]?\d{4}$" data-mini="true"></td></tr>
 					<tr><td colspan="2"><input type="checkbox" name="Vet" id="Vet" value="Y" <?php echo $strSel; ?> ><label for="Vet">Veterinarian? </label></td></tr>				
 					</tbody>
 			</table>
@@ -76,7 +76,7 @@ if (isset($_GET['x'])) {
 		<h1>Update Successful</h1>
 		</div>
 		<div data-theme="a">
-			<p><?php echo $row[0][FirstName] ?>'s record was successfully updated.</p>
+			<p><?php echo $row[0]['FirstName'] ?>'s record was successfully updated.</p>
 			<a href="#" data-rel="back" data-icon="delete" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-a">Close</a>			
 		</div>
 	</div> <!-- /popup -->
@@ -86,7 +86,7 @@ if (isset($_GET['x'])) {
 		<h1>Update Failed!</h1>
 		</div>
 		<div data-theme="a">
-			<p>The update for <?php echo $row[0][FirstName] ?> failed, please try again later!</p>
+			<p>The update for <?php echo $row[0]['FirstName'] ?> failed, please try again later!</p>
 			<p id="memCompanyErrorText" class="myErrMsg"></p>
 			<a href="#" data-rel="back" data-icon="delete" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b">Close</a>
 		</div>

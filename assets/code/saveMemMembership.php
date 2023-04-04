@@ -34,7 +34,7 @@ if (isset($_POST['PeopleT_id'])) {
 	}
 	if ($result = $mysqli->query($update_stmt)) {
 		$id = $PeopleT_id;
-		if ($_POST[memHistory]=='Y') {
+		if ($_POST['memHistory']=='Y') {
 			$mAction = dbPrep('mAction','s');	
 			if ($mAction=='Deactivate') {$MemberRenewed=$MemberInactive;}
 			$insert_stmt = "INSERT INTO MembershipTrack SET ".

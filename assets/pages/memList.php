@@ -84,7 +84,7 @@ var_dump($where);
 	<?php
 	} else {
 	?>
-		<ul data-role="listview" id="member_list" data-autodividers="false" data-filter="true" style="">
+		<ul data-role="listview" id="member_list" data-autodividers="false" data-filter="true">
 			<?php
 				if ($stmt->num_rows == 0) { 
 					$ary_msgs = array("No Members matching search criteria."); ?>
@@ -94,12 +94,12 @@ var_dump($where);
 				foreach ($row as $rcd) {
 				?>
 					<li style="padding-bottom:0.1em;padding-top:0.2em">
-					<a href="/assets/pages/member.php?x=<?php echo $rcd[PeopleT_id]; ?>&l=<?php echo $_GET['l']; ?>&q=<?php echo $_GET['q']; ?>" style="padding-bottom:0;padding-top:0" data-transition="slide">
-					<img src="<?php echo $rcd[PhotoLink]; ?>"/>
-					<h3><?php echo $rcd[LastName]; ?>,<?php echo $rcd[FirstName]; ?>&nbsp; #: <?php echo $rcd[Member_id]; ?></h3>
-					<p>Family: <?php echo $rcd[OtherName]; ?>
-					<br>Membership: <?php echo $rcd[MemCount];?>&nbsp;&nbsp;<?php echo $rcd[Membership]; ?>&nbsp;:&nbsp;<?php echo $rcd[MemberLevel]; ?>
-					<br>Company: <?php echo $rcd[Company]; ?>
+					<a href="/assets/pages/member.php?x=<?php echo $rcd['PeopleT_id']; ?>&l=<?php echo $_GET['l']; ?>&q=<?php echo $_GET['q']; ?>" style="padding-bottom:0;padding-top:0" data-transition="slide">
+					<img src="<?php echo $rcd['PhotoLink']; ?>"/>
+					<h3><?php echo $rcd['LastName']; ?>,<?php echo $rcd['FirstName']; ?>&nbsp; #: <?php echo $rcd['Member_id']; ?></h3>
+					<p>Family: <?php echo $rcd['OtherName']; ?>
+					<br>Membership: <?php echo $rcd['MemCount'];?>&nbsp;&nbsp;<?php echo $rcd['Membership']; ?>&nbsp;:&nbsp;<?php echo $rcd['MemberLevel']; ?>
+					<br>Company: <?php echo $rcd['Company']; ?>
 					</p></a></li>						
 			<?php	
 				}

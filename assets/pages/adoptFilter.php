@@ -203,7 +203,7 @@
 			</table>
 			</div>
 		<div class="content-primary" style="margin-top:0px; padding-top: 0px">
-				<ul data-role="listview" id="filt_list" data-autodividers="false" data-filter="true" style="">			
+				<ul data-role="listview" id="filt_list" data-autodividers="false" data-filter="true" >			
 				</ul>
 	
 	</div>

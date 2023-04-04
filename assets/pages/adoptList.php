@@ -97,18 +97,18 @@ var_dump($prep_stmt);
 				<?php
 				} else {
 					foreach ($row as $rcd) {
-					$contact = json_decode($rcd[applContact]);
-					$addr = $contact->{Addr}==''?'{Address}':$contact->{Addr}.', '.$contact->{City}.', '.$contact->{St}.' '.$contact->{Zip};					
+					$contact = json_decode($rcd['applContact']);
+					$addr = $contact->{'Addr'}==''?'{Address}':$contact->{'Addr'}.', '.$contact->{'City'}.', '.$contact->{'St'}.' '.$contact->{'Zip'};					
 				?>
-					<li style="padding-bottom:0.1em;padding-top:0.2em"><a href="/assets/pages/adopt.php?x=<?php echo $rcd[applid]; ?>&l=&q=" style="padding:0.5em 1em;" data-transition="slide">
-						<h3 style="margin-bottom:0;"><?php echo $contact->{LName}.', '.$contact->{FName};?>&nbsp; #: <?php echo $rcd[applid];?></h3>
-						<p style="margin-top:0;">Submitted: <?php echo $rcd[applDateTime];?>&nbsp;&nbsp;State: <?php echo $rcd[applState];?>&nbsp;&nbsp;Status: <?php echo $rcd[applStatus];?></p>
+					<li style="padding-bottom:0.1em;padding-top:0.2em"><a href="/assets/pages/adopt.php?x=<?php echo $rcd['applid']; ?>&l=&q=" style="padding:0.5em 1em;" data-transition="slide">
+						<h3 style="margin-bottom:0;"><?php echo $contact->{'LName'}.', '.$contact->{'FName'};?>&nbsp; #: <?php echo $rcd['applid'];?></h3>
+						<p style="margin-top:0;">Submitted: <?php echo $rcd['applDateTime'];?>&nbsp;&nbsp;State: <?php echo $rcd['applState'];?>&nbsp;&nbsp;Status: <?php echo $rcd['applStatus'];?></p>
 						<?php if ($_GET['q']=='HomeVisit' || $_GET['q']=='VisitComplete') { ?>
 							<p style="margin-top:0;">Home Visit Volunteer:&nbsp;<?php echo $rcd['hvfn'];?>&nbsp;<?php echo $rcd['hvln'];?></p>
 						<?php } ?>
 							<p><?php echo $addr;?>
-						<br>Email: <?php echo $contact->{Email};?>
-						<br>Phone: <?php echo $contact->{Phone};?></p>						
+						<br>Email: <?php echo $contact->{'Email'};?>
+						<br>Phone: <?php echo $contact->{'Phone'};?></p>						
 					</a></li>				
 			<?php	
 				}

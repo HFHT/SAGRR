@@ -21,7 +21,7 @@ if (isset($_POST['step'])) {
 	$result = $mysqli->query($prep_stmt);
 	$row = $result->fetch_assoc();
 	$applProgress = json_decode($row['applProgress']);
-	$applProgress[$step]->{Comp}='Y';
+	$applProgress[$step]->{'Comp'}='Y';
 	// Check if the overall adoption/foster flags need to get set based on the answer to a specific application question.
 	$faA = $faF = '';											
 	if (isset($_POST['fa'])) {
@@ -35,8 +35,8 @@ if (isset($_POST['step'])) {
 		$fini = true;
 		foreach ($applProgress as $pstep) {
 			// hack to make the last three application pages optional 
-			if (!($pstep->{Sec} == 'Fee Structure For Your Perfect Golden' || $pstep->{Sec} == 'Miscellaneous' || $pstep->{Sec} == 'Agreement')) {
-				if ($pstep->{Comp}=='N') {
+			if (!($pstep->{'Sec'} == 'Fee Structure For Your Perfect Golden' || $pstep->{'Sec'} == 'Miscellaneous' || $pstep->{'Sec'} == 'Agreement')) {
+				if ($pstep->{'Comp'}=='N') {
 					$fini = false;
 					break;
 				}
