@@ -1,0 +1,294 @@
+<!DOCTYPE html> 
+<html> 
+	<head>
+	<title>Southern Az Golden Retriever Rescue</title> 
+	<meta charset="utf-8">
+	<meta name="mobile-web-app-capable" content="yes">	
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">		
+	<meta name="viewport" content="width=device-width, initial-scale=1"> 
+	<!--meta name="google-signin-client_id" content="943166248101-qqm7bsj2tisaje1cplcqmaekd7746hhk.apps.googleusercontent.com"-->
+	<link rel="stylesheet" href="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css" />
+	<link rel="stylesheet" href="https://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.min.css" />	
+	
+	<script type="text/javascript" src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+	<script type="text/javascript" src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.14.0/jquery.validate.min.js"></script>
+	<script type="text/javascript" src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.14.0/additional-methods.min.js"></script>
+	<script type="text/javascript" src="https://code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
+	
+	<script>
+		$(document).bind("mobileinit", function() {				/* the following keeps internal hash changes out of browser history */
+			$.mobile.hashListeningEnabled = false;					/* we will handle changes in hash */
+			$.mobile.pushStateEnabled = true;						/* we will specify full URLs for Ajax */
+			$.mobile.changePage.defaults.changeHash = false;		/* disable location bar updates on anchor link */
+			$.mobile.page.prototype.options.domCache = false;
+			console.log('mobileinit');
+		});
+		var aryApplList = aryMemList = [];
+//		var objMemberList,objDogList;
+//		var objUser = {id : '', userid : '', email : '', name : '', imgURL : '', Options : {}};
+//		var objDogDash = {Counts : {}, Total : 0};
+//		var objNavParms = {x:'',n:'',l:'',q:''};
+//		var objMemDash = {Types: {}, Status: {}, Actions: {}, Total: 0};
+//		var objMainDash = {};
+//		var objMemSelect = {memName : '',memId : '', memKey: 0};
+//		var checklist,timerecords,chemicals,chemItem,memSelected;
+//		var checkLoaded = false, timeLoaded = false, chemLoaded = false; dogInfoPageCreated = false; dogMedicalPageCreated = false;
+//		var dogVisitEditPageCreated = false; dogStatusEditPageCreated = false; memSelectCreated = false; memNew = false;
+//		var dogBehPageCreated = false; memInfoPageCreated = false; memSkillPageCreated = false; memMembershipPageCreated = false;
+//		var memCompanyPageCreated = false; memInterestPageCreated = false; formChange = false; goingBack = false; dogListPageCreated = false;
+//		var memListPageCreated = false; memContactEditPageCreated = false; vetInfoPageCreated = false; vetListPageCreated = false;
+//		var person =[];
+//		person.push({age: 35, name: 'John Doe'});
+//		person.push({age: 26, name: 'Jane Doe'});
+//		person.push({age: 45, name: 'James Doe'});
+		$(document).on('pageinit', '#home', function(){ 
+			console.debug('pageinit');
+//			aryPageStack.push('home');
+			listDash();
+			$.validator.setDefaults({														/* Clear hilight from Save button when form error */
+				invalidHandler: function(event, validator) {
+					console.debug('validator invalid Handler');
+					$(".myNav").removeClass("ui-btn-active");
+				}
+			});
+			$.validator.addMethod(															/* Add validation methods for Date				*/
+				"USDate",
+				function(value, element) {
+					// put your own logic here, this is just a (crappy) example
+					return (value.match(/(0[1-9]|1[012])[- /.](0[1-9]|[12][0-9]|3[01])[- /.](19|20)\d\d/) || 
+							value.match(/^(19|20)\d\d[- /.](0[1-9]|1[012])[- /.](0[1-9]|[12][0-9]|3[01])$/) ||
+							this.optional(element));
+				},
+				"Please enter a date as mm/dd/yyyy."
+			);
+			// Validation method for US currency
+			$.validator.addMethod("currency", function (value, element) {					/* Add validation method for dollars			*/
+			  return this.optional(element) || /^(\d{1,3}(\,\d{3})*|(\d+))(\.\d{2})?$/.test(value);
+			}, "Please specify a valid amount");
+			$.validator.addMethod('selectcheck', function (value, element) {				/* Add validation method for select menus		*/
+				return (this.optional(element) || value != '0');
+			}, "Selection required");
+			$.validator.addMethod("zipcode", function(value, element) {						/* Add validation method for zip codes			*/
+				return this.optional(element) || /^\d{5}(?:-\d{4})?$/.test(value);
+			}, "Please provide a valid zipcode.");
+			$(document).on('vclick', '.backBtn', function () {
+				if (formChange) {
+					if (!confirm('Your changes will be lost. Are you sure?')) {
+						$(".myNav").removeClass("ui-btn-active");
+						return;
+					}
+				}
+//				goingBack = true;
+//				nextPage = popPageStack();
+//				console.debug(nextPage);
+//				$('body').pagecontainer('change',nextPage, {transition : 'slide', reverse : true});
+				$.mobile.back();
+			});
+			$(document).on('vclick', '.cancelBtn', function () {
+//				goingBack = true;
+//				nextPage = popPageStack();
+//				console.debug(nextPage);
+//				$('body').pagecontainer('change', nextPage, {transition : 'slide', reverse : true});
+				$.mobile.back();
+			}); 
+			$(document).on('vclick', '.homeBtn', function () {
+				console.debug('homeBtn');
+//				aryPageStack = [];
+				$('body').pagecontainer('change', '#home', {});
+			});			
+		});
+		$(document).on('pagebeforeshow', '#home', function(){
+			console.debug('#home');
+			aryPageStack = [];
+		});			
+						
+		function nullString(value) {return (value == null) ? "" : value;}							
+		
+		function listDash() {
+			$.ajax({
+				url: '/assets/code/applList.php',										/* Retrieve List of pending applications		*/
+				type: 'POST',
+				data: {pending: 'y'},
+				dataType: 'json',
+				async: true,
+				success: function (result) {
+//					console.debug(result);
+					if (result.error) {
+						alert(result.errorDetail.error_msg);
+					} else {
+						aryApplList = result.applList;
+						aryMemList = result.memList;
+					}
+				},
+				error: function (request,error) {					
+					alert('Network error1 has occurred please try again!');
+				}
+			});		
+		}
+		function makeid() {																			// Create random document id 
+			var text = "";
+			var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+			for( var i=0; i < 5; i++ )
+				text += possible.charAt(Math.floor(Math.random() * possible.length));
+			return text;
+		}		
+	</script>
+	<script type="text/javascript" src="/assets/js/applEdit.js"></script>
+	
+	<style type="text/css"> 
+		@media all and (min-width: 600px) {
+			.ui-page {width: 480px !important;} 
+			.ui-header {width: 480px !important;}
+			.ui-footer {width: 480px !important;}
+			body {width: 480px !important;} 
+		}
+		.ui-page-theme-a {
+			background-color: initial;
+		}
+		.my-ui-page-theme-a {
+			background-color: initial;
+		}
+		.ui-input-text input {
+			min-height: 1.9em;
+			padding: .2em .2em .2em .2em;
+		}
+		.ui-input-search input {
+			min-height: 1.9em;
+			padding: .2em .2em .2em 1.6em;
+		}		
+		.ui-input-text, .ui-input-search {
+			margin: .2em;
+		}
+		.ui-header .ui-title {
+			margin-right: 10%;
+			margin-left: 10%;
+		}
+		.ui-footer {
+			font-size: 0.8em;
+		}
+		.ui-mini {
+			margin: 0;
+		}
+		.ui-btn, label.ui-btn {
+			font-weight: initial;
+		}
+		.ui-select .ui-btn>span:not(.ui-li-count) {	
+			text-align:left;
+		}
+		.my-radio.ui-btn {
+			padding: 0.5em 0.5em;
+		}
+		.my-narrow.ui-content {
+			padding: 0.5em 1em 1em 1em;
+		}
+		.my-selector.ui-btn, .my-selector.ui-page-theme-a{
+			background-color : #fff ;
+			font-weight : initial;
+		}
+		.myErrMsg {
+			color : #FF7171;			
+		}
+		label.error { 
+			float: left; 
+			color: #FF7171; 
+			padding-top: .5em; 
+			vertical-align: top; 
+			font-weight:bold
+		}		
+		.skinnytable.ui-table {
+		/*	border: 1px solid rgb(51,51,51); */
+		/*	border-collapse: separate; */
+		}
+		.skinnytable.ui-table th,
+		.skinnytable.ui-table td{
+			padding: .2em;
+		}
+		.skinnytable thead th,
+		.skinnytable tbody tr:last-child {
+			border-bottom: 1px solid #d6d6d6;
+			border-bottom: 1px solid rgba(0,0,0,.1);
+		}
+		.skinnytable tbody th,
+		.skinnytable tbody td {
+			border-bottom: 1px solid #e6e6e6;
+			border-bottom: 1px solid rgba(0,0,0,.05);
+		}
+		.skinnytable tbody tr:last-child th,
+		.skinnytable tbody tr:last-child td {
+			border-bottom: 0;
+		}
+		.skinnytable tbody tr:nth-child(odd) td,
+		.skinnytable tbody tr:nth-child(odd) th {
+			background-color: #eeeeee;
+			background-color: rgba(0,0,0,.04);
+		}
+	</style>
+	<!-- Keep JQM here, it gives time for mobileinit to bind -->
+	<script type="text/javascript" src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>	
+	
+</head> 
+
+<body> 
+
+<div data-role="page" id="home">
+
+	<div data-role="header" data-position="fixed">
+		<img src="assets/img/SAGGR-DBLogo1-320.gif">
+		<div data-role="navbar" data-theme="b">
+			<ul>
+				<li>&nbsp;</li>	
+				<li><a href="/assets/pages/applProc/applSt1.php" class="ui-icon-arrow-r ui-btn-icon-right">Next</a></li>	
+			</ul>
+		</div><!-- /navbar -->
+		
+	</div><!-- /header -->
+	<div data-role="main" class="ui-content">
+		<h3 style="margin-top:0;">Foster or Adoption Application</h3>
+		<p>This is a combined foster and adoption application.  Please fill out the form completely with all the pertinent information.  
+		It is a lengthy form, but will help us better match a dog to your particular needs and desires.  The more information you can give us, 
+		the better match we can make for you and the golden.</p>
+		<p>A representative from SAGRR will be in contact with you.</p>
+	</div><!-- /content -->
+
+	<div data-role="footer" data-position="fixed">
+		<h4>Copyright Southern Az Golden Retriever Rescue 2015</h4>
+	</div><!-- /footer -->
+</div><!-- /page -->
+
+
+<div data-role="page" id="memberPage">
+
+	<div data-role="header" data-position="fixed">
+		<img src="assets/img/SAGGR-DBLogo1hdr-320.gif"> 
+		<div data-role="navbar" data-theme="b">
+			<ul>
+				<li><a href="#resumePage" class="ui-icon-arrow-l ui-btn-icon-left">Previous</a></li>	
+				<li><a id="applPg1" href="/assets/pages/applPg1.php?x=&m=" class="ui-icon-arrow-r ui-btn-icon-right">Next</a></li>	
+			</ul>
+		</div><!-- /navbar -->
+		
+	</div><!-- /header -->
+	<div data-role="main" class="ui-content">
+		<h4 style="margin-top:0;">Existing Member </h4>
+		<p>Are you a current member of SAGRR and have your membership number?</p>
+		<form id="memberForm">
+			<select name="member" id="member" data-role="slider">
+				<option value="N">No</option>
+				<option value="Y">Yes</option>
+			</select>
+			<div class="ui-grid-a" id="hidemem" style="display:none;">
+				<div class="ui-block-a" style="width:30%;white-space:pre-line;">Membership Number</div>
+				<div class="ui-block-b"><input type="text" name="Member_id" id="Member_id" value=""></div>
+			</div>
+		</form>
+	</div><!-- /content -->
+
+	<div data-role="footer" data-position="fixed">
+		<h4>Copyright Southern Az Golden Retriever Rescue 2015</h4>
+	</div><!-- /footer -->
+</div><!-- /page -->
+
+</body>
+		
+</html>

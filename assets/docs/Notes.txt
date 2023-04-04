@@ -1,0 +1,7 @@
+GET Parameter meanings used throughout the site:
+x - dog or member id
+n - dog or member familiar name
+v - vet visit record number
+a - indicates a new or latest status record (used by save routines to determine whether to update certain fields)
+l - indicates which field to apply to a list query (used together with q)
+q - indicates which value to apply to a list query (used together with l)

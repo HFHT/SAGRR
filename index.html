@@ -1,0 +1,1018 @@
+<!DOCTYPE html> 
+<html> 
+	<head> 
+	<title>Southern Az Golden Retriever Rescue</title> 
+	<meta charset="utf-8">
+	<meta name="mobile-web-app-capable" content="yes">	
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">		
+	<meta name="viewport" content="width=device-width, initial-scale=1"> 
+	<meta name="google-signin-client_id" content="943166248101-qqm7bsj2tisaje1cplcqmaekd7746hhk.apps.googleusercontent.com">
+	<meta name="google-site-verification" content="ZQH_H1putLjj71E7dd8Xy7A2TKmvYp85SiA1CTAhXcw" />
+	<link rel="manifest" href="/assets/js/manifest.json">
+	<link rel="stylesheet" href="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css" />
+	<link rel="stylesheet" href="https://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.min.css" />	
+	<link rel="stylesheet" href="https://demos.jquerymobile.com/1.2.0/docs/_assets/css/jqm-docs.css" />	
+	<link rel="stylesheet" href="/assets/styles/tablesorter.css" />	
+	
+	<script type="text/javascript" src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+	<script type="text/javascript" src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.14.0/jquery.validate.min.js"></script>
+	<script type="text/javascript" src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.14.0/additional-methods.min.js"></script>
+	<script type="text/javascript" src="https://code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
+	
+	<script>
+		$(document).bind("mobileinit", function() {							// the following keeps internal hash changes out of browser history
+			$.mobile.hashListeningEnabled = false;							// we will handle changes in hash
+			$.mobile.pushStateEnabled = true;								// we will specify full URLs for Ajax
+			$.mobile.changePage.defaults.changeHash = false;				// disable location bar updates on anchor link
+			$.mobile.page.prototype.options.domCache = false;
+			console.log('mobileinit');
+		});
+		var date = new Date(); 
+		var dateForm = date.getFullYear() + '-' + ('00'+(date.getMonth()+1)).slice(-2) + '-' + ('00'+date.getDate()).slice(-2);		
+		var oneDay = 24*60*60*1000; // hours*minutes*seconds*milliseconds
+		var objUser = {id : '', userid : '', email : '', name : '', imgURL : '', Options : {}};	// Holds the Google user information
+		var aryDash = [];																		// Holds the metrics from ListDash.php
+		var objMemSelect = {memName : '',memId : '', memKey: 0};								// Holds the Responsible person information
+		var objPageCreate = {};																	// Binary object holds which pages have been created
+		var objFilterData = {val:'x',Status: '', des:'',sex:'',child:'',dogs:'',cats:'',hours:'',healthminor:'',healthmajor:'',spec:'',hb:'',bi:'',age1:'0',age2:'20',door:'',pool:'',fence:''};
+		var arySavedForm = [];																	// Holds a saved form when selecting Responsible
+		var memSelected; memNew = false; formChange = false;									// Used by Select Responsible code
+		var objErr = {};
+		// Setup the globl jQuery ajax listeners
+		var evt_i = 0;																			// ajax event counter when 0 no outstanding events
+		localStorage.setItem("memGroupSel","");
+		localStorage.setItem("xxxMode","off");	
+		$(document).ajaxStart(function(evt,jqXHR,ajaxOptions,data) {
+			$.mobile.loading('show');
+		});
+		$(document).ajaxSend(function(evt,jqXHR,ajaxOptions,data) {
+			if (ajaxOptions.url.indexOf('/code/')>-1) {
+				evt_i++;																		// increment ajax event counter
+			}
+		});
+		$(document).ajaxSuccess(function(evt,jqXHR,ajaxOptions,data) {
+			if (ajaxOptions.url.indexOf('/code/')>-1) {
+				evt_i--;																		// decrement ajax event counter
+				$(".myNav").removeClass("ui-btn-active");
+			}
+			
+		});
+		$(document).ajaxError(function(evt,jqXHR,ajaxOptions,data) {
+			if (ajaxOptions.url.indexOf('/code/')>-1) {
+				evt_i--;																		// decrement ajax event counter
+				$(".myNav").removeClass("ui-btn-active");				
+			}
+			
+		});
+		$(document).ajaxComplete(function(evt,jqXHR,ajaxOptions,data) {
+			$.mobile.loading('hide');
+		});	
+		// Clear highlight from Save button when jQuery validator detects errors on forms
+		$.validator.setDefaults({
+			invalidHandler: function(event, validator) {										// !!!! This isn't working, it will remove the
+				$(".myNav").removeClass("ui-btn-active");										// class, but hilighting remains. Couldn't find 
+			}																					// any guidance on refreshing navbars.
+		});	
+		$(document).on('pageinit', '#home', function(){ 
+			console.log('pageinit');
+			// Load all of the dashboard metrics, repeat every 2 minutes
+			listDash();
+			setInterval(function() {
+				listDash();
+			},120000);			
+			// Validation method for US Date
+			$.validator.addMethod(
+				"USDate",
+				function(value, element) {
+					// put your own logic here, this is just a (crappy) example
+					return (value.match(/(0[1-9]|1[012])[- /.](0[1-9]|[12][0-9]|3[01])[- /.](19|20)\d\d/) || 
+							value.match(/^(19|20)\d\d[- /.](0[1-9]|1[012])[- /.](0[1-9]|[12][0-9]|3[01])$/) ||
+							this.optional(element));
+				},
+				"Please enter a date as mm/dd/yyyy."
+			);
+			// Validation method for US currency
+			$.validator.addMethod("currency", function (value, element) {
+			  return this.optional(element) || /^(\d{1,3}(\,\d{3})*|(\d+))(\.\d{2})?$/.test(value);
+			}, "Please specify a valid amount");
+			// Validation method for select menus
+			$.validator.addMethod('selectcheck', function (value, element) {
+				return (this.optional(element) || value != '0');
+			}, "Selection required");
+			// Validation method for zip codes
+			$.validator.addMethod("zipcode", function(value, element) {
+				return this.optional(element) || /^\d{5}(?:-\d{4})?$/.test(value);
+			}, "Please provide a valid zipcode.");
+			// When the Back Button is pressed, give user choice to stay on page, then tell JQM to go back to previous page
+			$(document).on('vclick', '.backBtn', function () {
+				if (formChange) {
+					if (!confirm('Your changes will be lost. Are you sure?')) {
+						$(".myNav").removeClass("ui-btn-active");
+						return;
+					}
+				}
+				formChange = false;
+				$.mobile.back();
+			});
+			$(document).on('vclick', '.intakebackBtn', function () {
+				console.debug('got click');
+				console.debug(formChange);
+				if (formChange) {
+					if (!confirm('Your changes will be lost. Are you sure?')) {
+						$(".myNav").removeClass("ui-btn-active");
+						return;
+					}
+				}
+				formChange = false;
+				$(":mobile-pagecontainer").pagecontainer( "change", $("#dogActiveMenu" ));
+			});
+			
+			// When the Cancel Button is pressed just tell JQM to go back to previous page.
+			$(document).on('vclick', '.cancelBtn', function () {
+				formChange = false;
+				$.mobile.back();
+			}); 
+			// When Home Button is pressed tell JQM to go to Home page
+			$(document).on('vclick', '.homeBtn', function () {
+				$('body').pagecontainer('change', '#home', {});
+			});	
+		});
+		$(document).on('pagebeforeshow', '#home', function(){
+		});	
+		$(document).on('pagecreate', '#RegisterPage', function(){
+			console.debug('Register Page');
+			$('#contactemail').text(objUser.email);				
+		});		
+		function nullString(value) {return (value == null) ? "" : value;}							
+		
+		/* Google authentication */
+		function onSignIn(googleUser) {		
+			var profile = googleUser.getBasicProfile();
+			objUser.id = profile.getId();													// Do not send to your backend! Use an ID token instead.
+			objUser.email = profile.getEmail();
+			objUser.name = profile.getName();
+//			objUser.imgURL = profile.getImageUrl();
+			objUser.userid = profile.getEmail().replace(/@.*$/,'');
+			console.log(objUser); 
+			$.mobile.loading('show');
+			$.ajax({
+				url: 'assets/code/userlog.php',
+				type: 'POST',
+				data: {userid : objUser.userid, email : objUser.email, name : objUser.name},
+				dataType: 'json',
+				async: true,
+				global: false,
+				success: function (result) {
+					objErr.success='userlog';
+					$.mobile.loading('hide');
+					if (result.error) {
+						$('body').pagecontainer('change', '#errorTrap', {});
+						$('#errorTrapMsg').html(result.errorDetail.error_no+': '+result.errorDetail.error_msg+'<p>'+result.errorDetail.error_sql);
+						alert(result.errorDetail.error_msg);
+					} else {
+						console.debug(result.data);
+//						window.scrollTo(0,1);
+						for (var attrname in result.data[0]) {objUser[attrname] = result.data[0][attrname];}	// Merge returned data into objUser
+						objUser.Role = JSON.parse(objUser.Role);												// Extract out roles
+						localStorage.setItem('userInfo',objUser);
+						if (objUser.Locked=='Y') {$('body').pagecontainer('change', '/assets/pages/userLockOut.php', {});}
+						if (objUser.Role.Self!='Y') {
+							$('body').pagecontainer('change', '/assets/pages/userRegister.php', {});
+						}
+						if (objUser.Role.Admin=='Y') {$('.my-pa').show();}
+						$('body').pagecontainer('change', '#home', {});							
+//		  				$.mobile.changePage('#home');										Deprecated in 1.4.0
+					}
+				},
+				error: function (request,error) {
+					$.mobile.loading('hide');			
+					$('body').pagecontainer('change', '#errorTrap', {});
+					$('#errorTrapMsg').text(request.status+': '+request.statusText);
+				}
+			});	
+		}
+		function signOut() {
+		var auth2 = gapi.auth2.getAuthInstance();
+		auth2.signOut().then(function () {
+		  console.log('User signed out.');
+		});
+		}
+		function listDash() {
+			$.mobile.loading('show');		
+			$.ajax({
+				url: '/assets/code/ListDash.php',										/* Retrieve Member, Dogs, and counts		*/
+				type: 'POST',
+				data: {userId: 'x'},
+				dataType: 'json',
+				async: true,
+				global: false,
+				success: function (result) {
+					$.mobile.loading('hide');			
+					if (result.error) {
+						alert(result.errorDetail.error_msg);
+					} else {
+						aryDash = result.data;
+						$('.dogDash').text('0');
+						$.each(aryDash, function(idx, value) {
+							strClass = '.d_'+idx.replace(/ /g,'_');
+							$(strClass).text(value);
+						});
+						$('.d_MaxMem').text('#'+$('.d_MaxMem').text());
+						$('.d_MaxAppl').text('#'+$('.d_MaxAppl').text());
+						$('.d_MaxDog').text('#'+$('.d_MaxDog').text());
+						if (aryDash.unew > 0 || aryDash.uunlink > 0) {
+							$('.userNew').text('Action');
+						} else {
+							$('.userNew').text('-');
+						}
+					}
+				},
+				error: function (request,error) {	
+					objErr.id='listdash';				
+					$.mobile.loading('hide');			
+					alert('Network error, could not access SAGRR DB, please try again later!');
+				}
+			});		
+		}
+	
+	</script>
+	<script type="text/javascript" src="/assets/js/dogEdit.js"></script>
+	<script type="text/javascript" src="/assets/js/memEdit.js"></script>
+	<script type="text/javascript" src="/assets/js/otherEdit.js"></script>	
+	<script type="text/javascript" src="/assets/js/adoptEdit.js"></script>		
+	<script type="text/javascript" src="/assets/js/memSelect.js"></script>
+	<script type="text/javascript" src="/assets/js/media.js"></script>
+	<script type="text/javascript" src="/assets/inc/jquery.tablesorter.min.js"></script>
+	
+	<style type="text/css"> 
+		@media all and (min-width: 600px) {
+			.ui-page {width: 480px !important;} 
+			.ui-header {width: 480px !important;}
+			.ui-footer {width: 480px !important;}
+			body {width: 480px !important;} 
+			.my-imgFull {width: 440px !important;}
+		}
+		.my-ui-page {
+			width: 100% !important;
+		}
+		.my-multi {
+			width: 100% !important;
+		}
+		@media all and (max-width: 320px) {
+			.my-pad-7 {
+				padding-left:7px;
+				padding-right: 7px;
+			}
+			.my-pad-8 {
+				padding-left:8px;
+				padding-right:8px;
+			}
+			.my-left-8 {
+				padding-left:8px;
+			}
+			.my-imgFull {width: 280px;}
+			.my-radio {
+				padding-left:3px !important;
+				padding-right: 3px !important;
+			}
+		}
+		@media all and (max-width: 360px) {
+			.my-imgFull {width: 340px;}		
+		}
+		@media all and (max-width: 640px) {
+			.my-imgFull {width: 580px;}		
+		}		
+		.ui-page-theme-a {
+			background-color: initial;
+		}
+		.my-tblhdr-fixed {
+		}
+		.my-ui-page-theme-a {
+			background-color: initial;
+		}
+		.ui-input-text input {
+			min-height: 1.9em;
+			padding: .2em .2em .2em .2em;
+		}
+		.ui-input-search input {
+			min-height: 1.9em;
+			padding: .2em .2em .2em 1.6em;
+		}		
+		.ui-input-text, .ui-input-search {
+			margin: .2em;
+		}
+		.ui-header .ui-title {
+			margin-right: 10%;
+			margin-left: 10%;
+		}
+		.ui-footer {
+			font-size: 0.8em;
+		}
+		.ui-mini {
+			margin: 0;
+		}
+		.ui-btn, label.ui-btn {
+			font-weight: initial;
+		}
+		.ui-select .ui-btn>span:not(.ui-li-count) {	
+			text-align:left;
+		}
+		.ui-bar, .ui-body {
+			padding:.2em .2em;
+		}
+		.ui-content	{
+		}
+		.my-radio.ui-btn {
+			padding: 0.5em 0.5em;
+		}
+		.my-narrow.ui-content {
+			padding: 0.5em 1em 1em 1em;
+		}
+		.my-selector.ui-btn, .my-selector.ui-page-theme-a{
+			background-color : #fff ;
+			font-weight : initial;
+		}
+		.myErrMsg {
+			color : #FF7171;			
+		}
+		.rainbowBridge {
+			background: linear-gradient( rgba(0,0,0,0.1), rgba(0,0,0,0.1)),url('assets/img/a-1094-rainbow-3.jpg');
+			color:lightgoldenrodyellow;
+		}
+		.rainbowBridgeSmall {
+			background: linear-gradient( rgba(0,0,0,0.1), rgba(0,0,0,0.1)),url('assets/img/a-1094-rainbow-3.jpg');
+			background-size:25%;
+			background-position: left; 
+			background-repeat:no-repeat;
+		}
+		.NCI {
+			background: url('assets/img/nosign.jpg');
+			background-position: center; 
+			background-repeat:no-repeat;
+		}
+		.NCIsmall {
+			background: url('assets/img/nosign.jpg');
+			background-size:25%;
+			background-position: left; 
+			background-repeat:no-repeat;
+		}				
+		label.error, p.error { 
+			float: left; 
+			color: #FF7171; 
+			padding-top: .5em; 
+			vertical-align: top; 
+			font-weight:bold
+		}
+		.my-sel-icon:after {
+			position:absolute;
+			display:block;
+			right: 1.2em;
+			top:40%;
+			margin-top: -11px;
+			content:'';
+			width: 22px;
+			height: 22px;
+			background-repeat: no-repeat;
+			background-position: center center;
+			background-color: rgba(0,0,0,.3);
+			border-radius:1em;
+			-webkit-border-radius:1em;
+		}
+		.my-edit-icon:after {
+			background-image: url("data:image/svg+xml;charset=US-ASCII,%3C%3Fxml%20version%3D%221.0%22%20encoding%3D%22iso-8859-1%22%3F%3E%3C!DOCTYPE%20svg%20PUBLIC%20%22-%2F%2FW3C%2F%2FDTD%20SVG%201.1%2F%2FEN%22%20%22http%3A%2F%2Fwww.w3.org%2FGraphics%2FSVG%2F1.1%2FDTD%2Fsvg11.dtd%22%3E%3Csvg%20version%3D%221.1%22%20id%3D%22Layer_1%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20xmlns%3Axlink%3D%22http%3A%2F%2Fwww.w3.org%2F1999%2Fxlink%22%20x%3D%220px%22%20y%3D%220px%22%20%20width%3D%2214px%22%20height%3D%2214px%22%20viewBox%3D%220%200%2014%2014%22%20style%3D%22enable-background%3Anew%200%200%2014%2014%3B%22%20xml%3Aspace%3D%22preserve%22%3E%3Cpath%20fill%3D%22%23FFF%22%20d%3D%22M1%2C10l-1%2C4l4-1l7-7L8%2C3L1%2C10z%20M11%2C0L9%2C2l3%2C3l2-2L11%2C0z%22%2F%3E%3Cg%3E%3C%2Fg%3E%3Cg%3E%3C%2Fg%3E%3Cg%3E%3C%2Fg%3E%3Cg%3E%3C%2Fg%3E%3Cg%3E%3C%2Fg%3E%3Cg%3E%3C%2Fg%3E%3Cg%3E%3C%2Fg%3E%3Cg%3E%3C%2Fg%3E%3Cg%3E%3C%2Fg%3E%3Cg%3E%3C%2Fg%3E%3Cg%3E%3C%2Fg%3E%3Cg%3E%3C%2Fg%3E%3Cg%3E%3C%2Fg%3E%3Cg%3E%3C%2Fg%3E%3Cg%3E%3C%2Fg%3E%3C%2Fsvg%3E");		
+		}
+		.my-carat-icon:after {
+			background-image: url("data:image/svg+xml;charset=US-ASCII,%3C%3Fxml%20version%3D%221.0%22%20encoding%3D%22iso-8859-1%22%3F%3E%3C!DOCTYPE%20svg%20PUBLIC%20%22-%2F%2FW3C%2F%2FDTD%20SVG%201.1%2F%2FEN%22%20%22http%3A%2F%2Fwww.w3.org%2FGraphics%2FSVG%2F1.1%2FDTD%2Fsvg11.dtd%22%3E%3Csvg%20version%3D%221.1%22%20id%3D%22Layer_1%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20xmlns%3Axlink%3D%22http%3A%2F%2Fwww.w3.org%2F1999%2Fxlink%22%20x%3D%220px%22%20y%3D%220px%22%20%20width%3D%2214px%22%20height%3D%2214px%22%20viewBox%3D%220%200%2014%2014%22%20style%3D%22enable-background%3Anew%200%200%2014%2014%3B%22%20xml%3Aspace%3D%22preserve%22%3E%3Cpolygon%20style%3D%22fill%3A%23FFFFFF%3B%22%20points%3D%223.404%2C2.051%208.354%2C7%203.404%2C11.95%205.525%2C14.07%2012.596%2C7%205.525%2C-0.071%20%22%2F%3E%3C%2Fsvg%3E");		
+		}
+		.skinnytable.ui-table {
+		/*	border: 1px solid rgb(51,51,51); */
+		/*	border-collapse: separate; */
+		}
+		.skinnytable.ui-table th,
+		.skinnytable.ui-table td{
+			padding: .2em;
+		}
+		.skinnytable thead th,
+		.skinnytable tbody tr:last-child {
+			border-bottom: 1px solid #d6d6d6;
+			border-bottom: 1px solid rgba(0,0,0,.1);
+		}
+		.skinnytable tbody th,
+		.skinnytable tbody td {
+			border-bottom: 1px solid #e6e6e6;
+			border-bottom: 1px solid rgba(0,0,0,.05);
+		}
+		.skinnytable tbody tr:last-child th,
+		.skinnytable tbody tr:last-child td {
+			border-bottom: 0;
+		}
+		.skinnytable tbody tr:nth-child(odd) td,
+		.skinnytable tbody tr:nth-child(odd) th {
+			background-color: #eeeeee;
+			background-color: rgba(0,0,0,.04);
+		.filter {
+			visibility: hidden;
+		}
+		}
+	</style>
+	<!-- Keep JQM here, it gives time for mobileinit to bind -->
+	<script type="text/javascript" src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>	
+	
+</head> 
+
+<body> 
+
+<div data-role="page" id="signin1">
+	<div data-role="header" data-position="fixed">
+		<img src="assets/img/SAGGR-DBLogo1-320.gif">
+	</div><!-- /header -->
+	<div data-role="content">
+		<div class="g-signin2" data-onsuccess="onSignIn"></div>
+		<p>A Gmail account is required to use this site, if this is your first time using this web application then Google will ask you to approve 
+		permissions that this site needs to authenticate you as an authorized user.</p>
+		<!--a href="#" onclick="signOut();">Sign out</a>	-->
+	</div><!-- /content -->
+	<div data-role="footer" data-position="fixed">
+		<h4>Copyright Southern Az Golden Retriever Rescue 2015</h4>
+	</div><!-- /footer -->	
+</div>
+<div data-role="page" id="home">
+
+	<div data-role="header" data-position="fixed">
+		<img src="assets/img/SAGGR-DBLogo1hdr-320.gif">
+		<div data-role="navbar" data-iconpos="left" data-theme="b">
+			<ul>
+				<li><a href="#helpPage" data-icon="info">Help</a></li>	
+				<li><a href="#videoPage" data-icon="video">Tutorials</a></li>
+				<li><a href="#settings" data-icon="gear">Settings</a></li>
+			</ul>
+		</div><!-- /navbar -->
+		
+	</div><!-- /header -->
+	<div data-role="main" class="ui-content">
+		<ul data-role="listview" data-divider-theme="a" data-inset="true" style="">
+			<li data-role="list-divider" role="heading"> Action Required </li>
+			<li><a href="#dogActiveMenu" data-transition="slide"> Active Dogs <span class="dogDash d_DogActive ui-li-count">-</span></a></li>			
+			<li><a href="#adoptActivePage" data-transition="slide"> Active Applications <span class="dogDash d_appA ui-li-count">-</span></a></li>
+			<li><a href="#fupMenu" data-transition="slide"> Dog Follow-ups </a></li>
+			<li><a href="#membership" data-transition="slide"> Membership Renewals</a></li>
+			<li data-role="list-divider" role="heading"> All Records </li>
+			<li><a href="#dogMenu" data-transition="slide"> Dogs <span class="dogDash d_MaxDog ui-li-count">-</span></a></li>			
+			<li><a href="#adoptPage" data-transition="slide"> Applications <span class="dogDash d_MaxAppl ui-li-count">-</span></a></li>
+			<li><a href="#memberMenu" data-transition="slide"> Members <span class="dogDash d_MaxMem ui-li-count">-</span></a></li>
+			<li><a href="/assets/pages/vetList.php?l=all&q=&s=m" data-transition="slide"> Veterinarians </a></li>
+			<li><a href="#teamMenu" data-transition="slide"> Teams & Interests </a></li>
+			<li data-role="list-divider" role="heading">Administration</li>
+			<li><a href="#mediaMenu" data-transition="slide"> Manage Media </a></li>
+			<!--li data-icon="gear"><a href="#settings" data-transition="slide"> Settings </a></li-->
+			<li data-icon="gear" class='my-pa' style="display:none;"><a href="#admin" data-transition="slide"> Administration <span class="dogDash userNew ui-li-count">-</span></a></li>
+		</ul>	
+	</div><!-- /content -->
+
+	<div data-role="footer" data-position="fixed">
+		<h4>Copyright Southern Az Golden Retriever Rescue 2015</h4>
+	</div><!-- /footer -->
+</div><!-- /page -->
+
+<div data-role="page" id="dogMenu">
+
+	<div data-role="header" data-position="fixed">
+		<img src="assets/img/SAGGR-DBLogo1hdr-320.gif">
+		<div data-role="navbar" data-iconpos="left" data-theme="b">
+			<ul>
+				<li><a href="#home" data-icon="back" data-transition="slide" data-direction="reverse">Back</a></li>	
+				<li><a href="#home" data-icon="home">Home</a></li>	
+				<li>&nbsp;</li>
+			</ul>
+		</div><!-- /navbar -->
+		
+	</div><!-- /header -->
+	<div data-role="main" class="ui-content">
+		<ul data-role="listview" data-divider-theme="a" data-inset="true" data-count-theme="a">
+			<li><a href="/assets/pages/dogList.php?x=0&l=all&q=" data-transition="slide"> All Dogs <span class="dogDash d_dogT ui-li-count">-</span></a></li>
+			<li data-role="list-divider" role="heading"></li>
+			<li><a href="/assets/pages/dogList.php?x=0&l=ps&q=InProcess" data-transition="slide"> In Process <span class="dogDash d_InProcess ui-li-count">-</span></a></li>
+			<li><a href="/assets/pages/dogList.php?x=0&a=n&l=ps&q=Fostered" data-transition="slide"> Fostered <span class="dogDash d_Fostered ui-li-count">-</span></a></li>
+			<li><a href="/assets/pages/dogList.php?x=0&a=n&l=ps&q=Match-Trial" data-transition="slide"> Match-Trial <span class="dogDash d_Match-Trial ui-li-count">-</span></a></li>
+			<li><a href="/assets/pages/dogList.php?x=0&a=n&l=ps&q=Adopted" data-transition="slide"> Adopted <span class="dogDash d_Adopted ui-li-count">-</span></a></li>
+			<li data-role="list-divider" role="heading"></li>			
+			<li><a href="/assets/pages/dogList.php?x=0&a=n&l=cs&q=NCI" data-transition="slide"> NCI <span class="dogDash d_NCI ui-li-count">-</span></a></li>
+			<li><a href="/assets/pages/dogList.php?x=0&a=n&l=cs&q=Bridge" data-transition="slide"> Bridge <span class="dogDash d_Bridge ui-li-count">-</span></a></li>
+			<li data-role="list-divider" role="heading"></li>			
+			<li><a href="/assets/pages/dogList.php?x=0&a=n&l=ic&q=" data-transition="slide"> Incomplete Records <span class="dogDash d_dogX ui-li-count">-</span></a></li>
+			<li><a href="/assets/pages/dogSourceList.php?l=x" data-transition="slide"> Dog Sources </a></li>			
+			<li><a href="https://www.aaha.org/petmicrochiplookup/" data-transition="slide"> Microchip Lookup Service </a></li>			
+			<li data-role="list-divider" role="heading"></li>			
+			<li><a href="/assets/pages/bigDog.php?x=1" data-transition="slide"> Big List </a></li>			
+		</ul>		
+	</div><!-- /content -->
+
+	<div data-role="footer" data-position="fixed">
+		<h4>Copyright Southern Az Golden Retriever Rescue 2015</h4>
+	</div><!-- /footer -->
+</div><!-- /page -->
+<div data-role="page" id="dogActiveMenu">
+
+	<div data-role="header" data-position="fixed">
+		<img src="assets/img/SAGGR-DBLogo1hdr-320.gif">
+		<div data-role="navbar" data-iconpos="left" data-theme="b">
+			<ul>
+				<li><a href="#home" data-icon="back" data-transition="slide" data-direction="reverse">Back</a></li>	
+				<li><a href="#home" data-icon="home">Home</a></li>	
+				<li>&nbsp;</li>
+			</ul>
+		</div><!-- /navbar -->
+		
+	</div><!-- /header -->
+	<div data-role="main" class="ui-content">
+		<ul data-role="listview" data-divider-theme="a" data-inset="true" data-count-theme="a">
+			<li><a href="/assets/pages/dogList.php?x=0&l=ai&q=InProcess&s=a" data-transition="slide"> In Process <span class="dogDash d_DogOnlyInProc ui-li-count">-</span></a></li>
+			<li><a href="/assets/pages/dogList.php?x=0&a=n&l=cs&q=Hold-Behavior&s=a" data-transition="slide"> Hold-Behavior <span class="dogDash d_Hold-Behavior ui-li-count">-</span></a></li>
+			<li><a href="/assets/pages/dogList.php?x=0&a=n&l=cs&q=Hold-Medical&s=a" data-transition="slide"> Hold-Medical <span class="dogDash d_Hold-Medical ui-li-count">-</span></a></li>
+			<li><a href="/assets/pages/dogList.php?x=0&a=n&l=cs&q=InTransit&s=a" data-transition="slide"> InTransit <span class="dogDash d_InTransit ui-li-count">-</span></a></li>
+			<li data-role="list-divider" role="heading"></li>			
+			<li><a href="/assets/pages/dogList.php?x=0&a=n&l=af&q=Fostered&s=a" data-transition="slide"> Fostered <span class="dogDash d_DogOnlyFost ui-li-count">-</span></a></li>
+			<li><a href="/assets/pages/dogList.php?x=0&a=n&l=at&q=Match-Trial&s=a" data-transition="slide"> Match-Trial <span class="dogDash d_DogOnlyTrial ui-li-count">-</span></a></li>
+			<li data-role="list-divider" role="heading"></li>			
+			<li data-icon="plus"><a href="/assets/pages/dogIntake.php?x=0&s=a" data-transition="slide"> Start New Dog Intake</a></li>
+
+		</ul>		
+	</div><!-- /content -->
+
+	<div data-role="footer" data-position="fixed">
+		<h4>Copyright Southern Az Golden Retriever Rescue 2015</h4>
+	</div><!-- /footer -->
+</div><!-- /page -->
+
+<div data-role="page" id="memberMenu">
+
+	<div data-role="header" data-position="fixed">
+		<img src="assets/img/SAGGR-DBLogo1hdr-320.gif">
+		<div data-role="navbar" data-iconpos="left" data-theme="b">
+			<ul>
+				<li><a href="#home" data-icon="back" data-transition="slide" data-direction="reverse">Back</a></li>	
+				<li><a href="#home" data-icon="home">Home</a></li>	
+				<li>&nbsp;</li>
+			</ul>
+		</div><!-- /navbar -->
+		
+	</div><!-- /header -->
+	<div data-role="main" class="ui-content">
+		<ul data-role="listview" data-divider-theme="a" data-inset="true" data-count-theme="a">
+			<li data-icon="info"><a href="#">Total Membership<span class="dogDash d_trueMem ui-li-count">-</span></a></li>
+			<li><a href="/assets/pages/memList.php?l=all&q=&s=m" data-transition="slide"> All Members <span class="dogDash d_memT ui-li-count">-</span></a></li>
+			<li data-role="list-divider" role="heading"></li>
+			<li><a href="/assets/pages/memList.php?a=n&l=am&q=&s=m" data-transition="slide"> Active Members <span class="dogDash d_notinactive ui-li-count">-</span></a></li>
+			<li data-role="list-divider" role="heading"></li>			
+			<li><a href="/assets/pages/memList.php?a=n&l=ml&q=Sponsor&s=m" data-transition="slide"> Sponsor <span class="dogDash d_Sponsor ui-li-count">-</span></a></li>
+			<li><a href="/assets/pages/memList.php?a=n&l=ml&q=Basic&s=m" data-transition="slide"> Basic <span class="dogDash d_Basic ui-li-count">-</span></a></li>
+			<li><a href="/assets/pages/memList.php?a=n&l=ml&q=Student&s=m" data-transition="slide"> Student <span class="dogDash d_Student ui-li-count">-</span></a></li>
+			<li><a href="/assets/pages/memList.php?a=n&l=ml&q=Guest&s=m" data-transition="slide"> Guest <span class="dogDash d_Guest ui-li-count">-</span></a></li>
+			<li data-role="list-divider" role="heading"></li>
+			<li><a href="/assets/pages/memList.php?a=n&l=fa&q=Foster&s=m" data-transition="slide"> Willing to Foster <span class="dogDash d_foster ui-li-count">-</span></a></li>
+			<li><a href="/assets/pages/memList.php?a=n&l=fa&q=Adopter&s=m" data-transition="slide"> Willing to Adopt <span class="dogDash d_adopter ui-li-count">-</span></a></li>
+			<li data-role="list-divider" role="heading"></li>			
+			<li><a href="/assets/pages/memList.php?a=n&l=ch&q=&s=m" data-transition="slide"> Charter Members <span class="dogDash d_charter ui-li-count">-</span></a></li>
+			<li><a href="/assets/pages/memList.php?a=n&l=im&q=&s=m" data-transition="slide"> Inactive Members <span class="dogDash d_Inactive ui-li-count">-</span></a></li>
+			<li data-role="list-divider" role="heading"></li>
+			<li><a href="/assets/pages/bigMem.php?x=1" data-transition="slide"> Big List </a></li>			
+		</ul>	
+		<p style="font-size:.75em;white-space:pre-line;">Total Membership is the number of Active Individual Members.  All the other counts on this page reflect records (families), not individual members.</p>		
+	</div><!-- /content -->
+	<div data-role="footer" data-position="fixed">
+		<h4>Copyright Southern Az Golden Retriever Rescue 2015</h4>
+	</div><!-- /footer -->
+</div><!-- /page -->
+
+<div data-role="page" id="adoptPage">
+	<div data-role="header" data-position="fixed">
+		<img src="assets/img/SAGGR-DBLogo1hdr-320.gif">
+		<div data-role="navbar" data-iconpos="left" data-theme="b">
+			<ul>
+				<li><a href="#home" data-icon="back" data-transition="slide" data-direction="reverse">Back</a></li>	
+				<li><a href="#home" data-icon="home">Home</a></li>	
+				<li>&nbsp;</li>
+			</ul>
+		</div><!-- /navbar -->		
+	</div><!-- /header -->
+	<div data-role="main" class="ui-content">
+		<ul data-role="listview" data-divider-theme="a" data-inset="true" data-count-theme="a">
+			<li><a href="/assets/pages/adoptList.php?l=x&q=&s=h" data-transition="slide"> All Requests <span class="dogDash d_applyAll ui-li-count">-</span></a></li>
+			<li data-role="list-divider" role="heading"></li>
+			<li><a href="/assets/pages/adoptList.php?l=s&q=Active&s=h" data-transition="slide"> Active <span class="dogDash d_S_Active ui-li-count">-</span></a></li>
+			<li><a href="/assets/pages/adoptList.php?l=s&q=Complete&s=h" data-transition="slide"> Complete <span class="dogDash d_S_Complete ui-li-count">-</span></a></li>
+			<li data-role="list-divider" role="heading">Other</li>			
+			<li><a href="/assets/pages/adoptList.php?l=s&a=n&q=DFOS&s=h" data-transition="slide"> DFOS <span class="dogDash d_S_DFOS ui-li-count">-</span></a></li>			
+			<li><a href="/assets/pages/adoptList.php?l=s&a=n&q=Inactive&s=h" data-transition="slide"> Inactive <span class="dogDash d_S_Inactive ui-li-count">-</span></a></li>			
+			<li><a href="/assets/pages/adoptList.php?l=s&a=n&q=Withdrawn&s=h" data-transition="slide"> Withdrawn <span class="dogDash d_S_Withdrawn ui-li-count">-</span></a></li>			
+			<li><a href="/assets/pages/adoptList.php?l=s&a=n&q=NotApproved&s=h" data-transition="slide"> Not Approved <span class="dogDash d_S_NotApproved ui-li-count">-</span></a></li>			
+			<li data-role="list-divider" role="heading"></li>			
+			<li><a href="/assets/pages/bigAdopt.php?x=1&s=h" data-transition="slide"> Big List </a></li>			
+		</ul>
+	</div><!-- /content -->
+	<div data-role="footer" data-position="fixed">
+		<h4>Copyright Southern Az Golden Retriever Rescue 2015</h4>
+	</div><!-- /footer -->
+</div><!-- /page -->
+<div data-role="page" id="adoptActivePage">
+	<div data-role="header" data-position="fixed">
+		<img src="assets/img/SAGGR-DBLogo1hdr-320.gif">
+		<div data-role="navbar" data-iconpos="left" data-theme="b">
+			<ul>
+				<li><a href="#home" data-icon="back" data-transition="slide" data-direction="reverse">Back</a></li>	
+				<li><a href="#home" data-icon="home">Home</a></li>	
+				<li>&nbsp;</li>
+			</ul>
+		</div><!-- /navbar -->		
+	</div><!-- /header -->
+	<div data-role="main" class="ui-content">
+		<ul data-role="listview" data-divider-theme="a" data-inset="true" data-count-theme="a">
+			<li><a href="/assets/pages/adoptList.php?l=a&q=Draft&s=a" data-transition="slide"> Drafts (Incomplete) <span class="dogDash d_A_Draft ui-li-count">-</span></a></li>
+			<li><a href="/assets/pages/adoptList.php?l=a&q=Problem&s=a" data-transition="slide"> Needs Attention <span class="dogDash d_A_Problem ui-li-count">-</span></a></li>
+			<li data-role="list-divider" role="heading">In Process</li>
+			<li><a href="/assets/pages/adoptList.php?l=a&a=n&q=New&s=a" data-transition="slide"> New Requests <span class="dogDash d_A_New ui-li-count">-</span></a></li>
+			<li><a href="/assets/pages/adoptList.php?l=a&a=n&q=HomeVisit&s=a" data-transition="slide"> Schedule Home Visit <span class="dogDash d_A_HomeVisit ui-li-count">-</span></a></li>
+			<li><a href="/assets/pages/adoptList.php?l=a&a=n&q=VisitComplete&s=a" data-transition="slide"> Home Visit Complete <span class="dogDash d_A_VisitComplete ui-li-count">-</span></a></li>
+			<li><a href="/assets/pages/adoptList.php?l=a&a=n&q=Decision&s=a" data-transition="slide"> Decision Review <span class="dogDash d_A_Decision ui-li-count">-</span></a></li>
+			<li data-role="list-divider" role="heading">Waiting</li>			
+			<li><a href="/assets/pages/adoptList.php?l=a&a=n&q=WaitList&s=a" data-transition="slide"> Approved - WaitList <span class="dogDash d_A_WaitList ui-li-count">-</span></a></li>
+			<li><a href="/assets/pages/adoptList.php?l=a&a=n&q=ShortList&s=a" data-transition="slide"> Approved - ShortList <span class="dogDash d_A_ShortList ui-li-count">-</span></a></li>
+			<li><a href="/assets/pages/adoptList.php?l=a&a=n&q=Match-Trial&s=a" data-transition="slide"> Match - Trial <span class="dogDash d_A_Match-Trial ui-li-count">-</span></a></li>
+			<li><a href="/assets/pages/adoptList.php?l=a&a=n&q=MatchFoster&s=a" data-transition="slide"> Matched Foster <span class="dogDash d_A_MatchFoster ui-li-count">-</span></a></li>			
+			<li><a href="/assets/pages/adoptList.php?l=a&a=n&q=Returned&s=a" data-transition="slide"> Returned <span class="dogDash d_A_Returned ui-li-count">-</span></a></li>			
+			<li data-role="list-divider" role="heading"></li>			
+			<li><a href="/assets/pages/adoptFilter.php?x=1&s=a" data-transition="slide"> Filter (under construction) </a></li>			
+			<li><a href="/assets/pages/bigAdopt.php?x=1&s=a" data-transition="slide"> Big List </a></li>			
+		</ul>
+	</div><!-- /content -->
+	<div data-role="footer" data-position="fixed">
+		<h4>Copyright Southern Az Golden Retriever Rescue 2015</h4>
+	</div><!-- /footer -->
+</div><!-- /page -->
+
+<div data-role="page" id="fupMenu">
+	<div data-role="header" data-position="fixed">
+		<img src="assets/img/SAGGR-DBLogo1hdr-320.gif">
+		<div data-role="navbar" data-iconpos="left" data-theme="b">
+			<ul>
+				<li><a href="#home" data-icon="back" data-transition="slide" data-direction="reverse">Back</a></li>	
+				<li><a href="#home" data-icon="home">Home</a></li>	
+				<li>&nbsp;</li>
+			</ul>
+		</div><!-- /navbar -->		
+	</div><!-- /header -->
+	<div data-role="main" class="ui-content">
+		<ul data-role="listview" data-divider-theme="a" data-inset="true" data-count-theme="a">
+			<li><a href="/assets/pages/dogList.php?a=n&l=cs&q=Hold-Medical&s=f" data-transition="slide"> Hold-Medical <span class="dogDash d_Hold-Medical ui-li-count">-</span></a></li>
+			<li><a href="/assets/pages/dogList.php?a=n&l=cs&q=Hold-Behavior&s=f" data-transition="slide"> Hold-Behavior <span class="dogDash d_Hold-Behavior ui-li-count">-</span></a></li>
+			<li data-role="list-divider" role="heading"></li>			
+			<li><a href="/assets/pages/dogList.php?a=n&l=ve&q=59&s=f" data-transition="slide"> Expiring vaccinations <span class="dogDash d_vaccP ui-li-count">-</span></a></li>
+			<li><a href="/assets/pages/dogList.php?a=n&l=vx&q=&s=f" data-transition="slide"> Expired vaccinations <span class="dogDash d_vaccX ui-li-count">-</span></a></li>
+			<li data-role="list-divider" role="heading"></li>			
+			<li><a href="/assets/pages/dogVisit.php?a=n&x=0&l=pend&q=&s=f" data-transition="slide"> Vet Followups pending <span class="dogDash d_vetP ui-li-count">-</span></a></li>			
+			<li><a href="/assets/pages/dogVisit.php?a=n&x=0&l=miss&q=&s=f" data-transition="slide"> Vet Followups missed <span class="dogDash d_vetX ui-li-count">-</span></a></li>
+		</ul>	
+	</div><!-- /content -->
+	<div data-role="footer" data-position="fixed">
+		<h4>Copyright Southern Az Golden Retriever Rescue 2015</h4>
+	</div><!-- /footer -->
+</div><!-- /page -->
+
+<div data-role="page" id="membership">
+	<div data-role="header" data-position="fixed">
+		<img src="assets/img/SAGGR-DBLogo1hdr-320.gif">
+		<div data-role="navbar" data-iconpos="left" data-theme="b">
+			<ul>
+				<li><a href="#home" data-icon="back" data-transition="slide" data-direction="reverse">Back</a></li>	
+				<li><a href="#home" data-icon="home">Home</a></li>	
+				<li>&nbsp;</li>
+			</ul>
+		</div><!-- /navbar -->	
+	</div><!-- /header -->
+	<div data-role="main" class="ui-content">
+		<ul data-role="listview" data-divider-theme="a" data-inset="true" data-count-theme="a">
+			<li><a href="/assets/pages/memList.php?a=n&l=ic&q=&s=s" data-transition="slide"> Incomplete Records <span class="dogDash d_memX ui-li-count">-</span></a></li>
+			<li><a href="/assets/pages/memList.php?a=n&l=pm&q=&s=s" data-transition="slide"> Pending Members <span class="dogDash d_Pending ui-li-count">-</span></a></li>
+			<li data-role="list-divider" role="heading"></li>			
+			<li><a href="/assets/pages/memList.php?a=n&l=me&q=&s=s" data-transition="slide"> Expiring Soon <span class="dogDash d_memPend ui-li-count">-</span></a></li>
+			<li><a href="/assets/pages/memList.php?a=n&l=mx&q=&s=s" data-transition="slide"> Expired <span class="dogDash d_memExp ui-li-count">-</span></a></li>			
+			<li><a href="/assets/pages/memList.php?a=n&l=nr&q=&s=s" data-transition="slide"> No Renewal Date <span class="dogDash d_memNull ui-li-count">-</span></a></li>			
+		</ul>	
+	</div><!-- /content -->
+	<div data-role="footer" data-position="fixed">
+		<h4>Copyright Southern Az Golden Retriever Rescue 2015</h4>
+	</div><!-- /footer -->
+</div><!-- /page -->
+
+<div data-role="page" id="teamMenu">
+	<div data-role="header" data-position="fixed">
+		<img src="assets/img/SAGGR-DBLogo1hdr-320.gif">
+		<div data-role="navbar" data-iconpos="left" data-theme="b">
+			<ul>
+				<li><a href="#home" data-icon="back" data-transition="slide" data-direction="reverse">Back</a></li>	
+				<li><a href="#home" data-icon="home">Home</a></li>	
+				<li>&nbsp;</li>
+			</ul>
+		</div><!-- /navbar -->	
+	</div><!-- /header -->
+	<div data-role="main" class="ui-content">
+		<ul data-role="listview" data-divider-theme="a" data-inset="true" data-count-theme="a">
+			<li><a href="/assets/pages/memGroup.php?x=0&m=team" data-transition="slide"> Team Assignments </a></li>			
+			<li><a href="/assets/pages/memGroup.php?x=0" data-transition="slide"> Member Interests </a></li>			
+		</ul>	
+	</div><!-- /content -->
+	<div data-role="footer" data-position="fixed">
+		<h4>Copyright Southern Az Golden Retriever Rescue 2015</h4>
+	</div><!-- /footer -->
+</div><!-- /page -->
+
+<div data-role="page" id="mediaMenu">
+	<div data-role="header" data-position="fixed">
+		<img src="assets/img/SAGGR-DBLogo1hdr-320.gif">
+		<div data-role="navbar" data-iconpos="left" data-theme="b">
+			<ul>
+				<li><a href="#home" data-icon="back" data-transition="slide" data-direction="reverse">Back</a></li>	
+				<li><a href="#home" data-icon="home">Home</a></li>	
+				<li>&nbsp;</li>
+			</ul>
+		</div><!-- /navbar -->	
+	</div><!-- /header -->
+	<div data-role="main" class="ui-content">
+		<ul data-role="listview" data-divider-theme="a" data-inset="true" data-count-theme="a">
+			<li><a href="/assets/pages/mediaList.php?l=Profile&q=&s=m" data-transition="slide"> Profile photos <span class="dogDash d_Profile ui-li-count">-</span></a></li>
+			<li><a href="/assets/pages/mediaList.php?l=Photo&q=&s=m" data-transition="slide"> Photos <span class="dogDash d_Photo ui-li-count">-</span></a></li>
+			<li><a href="/assets/pages/mediaList.php?l=Document&q=&s=m" data-transition="slide"> Documents <span class="dogDash d_Document ui-li-count">-</span></a></li>			
+			<li><a href="/assets/pages/mediaList.php?l=XRay&q=&s=m" data-transition="slide"> XRays <span class="dogDash d_XRay ui-li-count">-</span></a></li>			
+			<li><a href="/assets/pages/mediaList.php?l=Invoice&q=&s=m" data-transition="slide"> Invoices <span class="dogDash d_Invoice ui-li-count">-</span></a></li>			
+		</ul>	
+	</div><!-- /content -->
+	<div data-role="footer" data-position="fixed">
+		<h4>Copyright Southern Az Golden Retriever Rescue 2015</h4>
+	</div><!-- /footer -->
+</div><!-- /page -->
+
+<div data-role="page" id="admin">
+	<div data-role="header" data-position="fixed">
+		<img src="assets/img/SAGGR-DBLogo1hdr-320.gif">
+		<div data-role="navbar" data-iconpos="left" data-theme="b">
+			<ul>
+				<li><a href="#home" data-icon="back" data-transition="slide" data-direction="reverse">Back</a></li>	
+				<li><a href="#home" data-icon="home">Home</a></li>	
+				<li>&nbsp;</li>
+			</ul>
+		</div><!-- /navbar -->	
+	</div><!-- /header -->
+	<div data-role="main" class="ui-content">
+		<ul data-role="listview" data-divider-theme="a" data-inset="true" data-count-theme="a" class="my-pa" style="display:none";>
+			<li><a href="/assets/pages/userList.php?l=un&q=&s=s" data-transition="slide"> New Users <span class="dogDash d_unew ui-li-count">-</span></a></li>
+			<li><a href="/assets/pages/userList.php?l=nl&q=&s=s" data-transition="slide"> Users not linked to member <span class="dogDash d_uunlink ui-li-count">-</span></a></li>
+			<li data-role="list-divider" role="heading"></li>			
+			<li><a href="/assets/pages/userList.php?l=ue&q=&s=s" data-transition="slide"> Users with Editor <span class="dogDash d_uedit ui-li-count">-</span></a></li>			
+			<li><a href="/assets/pages/userList.php?l=ua&q=&s=s" data-transition="slide"> Users with Admin <span class="dogDash d_uadm ui-li-count">-</span></a></li>			
+			<li><a href="/assets/pages/userList.php?l=ul&q=&s=s" data-transition="slide"> Locked Users <span class="dogDash d_locked ui-li-count">-</span></a></li>			
+			<li data-role="list-divider" role="heading"></li>
+			<li><a href="/assets/pages/userList.php?l=all&q=&s=s" data-transition="slide"> All valid users <span class="dogDash d_ulinked ui-li-count">-</span></a></li>
+			<li data-role="list-divider" role="heading"></li>
+			<li data-icon="comment"><a href="/assets/pages/wishList.php?l=all&q=&s=s" data-transition="slide"> Wish List/Bug Report <span class="dogDash d_Open ui-li-count">-</span></a></li>
+			<li data-role="list-divider" role="heading"></li>
+			<li style="padding-top:0;padding-bottom:0;background-color:#f9f9f9">
+				<fieldset class="ui-grid-a">
+				<div class="ui-block-a" style="margin-top:5px;"><h3>Override Mode:</h3></div>
+				<div class="ui-block-b">
+					<label for="xxxMode" class="ui-hidden-accessible">Flip toggle switch:</label>
+					<select name="xxxMode" id="xxxMode" data-role="slider">
+					<option value="off">Off</option>
+					<option value="on">On</option>
+					</select>
+				</div>
+			</li>
+		</ul>
+		<p style="font-size:.75em;white-space:pre-line;">An Administer should link New Users to their corresponding Membership record.</p>
+		<p style="font-size:.75em;margin-bottom:0;">Editor rights are:</p>
+		<ul style="font-size:.75em;margin-top:1px;">
+		<li>Dog/Member/Applicant - can edit those records</li>
+		<li>Approval - can approve an application</li>
+		<li>Dog Assignment - can assign dogs to applicants or members</li>
+		<li>Admin - can administer the site.</li></ul>
+		<p style="font-size:.75em;margin-bottom:0;">Override Mode allows an Administrator to make any State or Status Change even those that should be handled by the system.</p>
+	</div><!-- /content -->
+	<div data-role="footer" data-position="fixed">
+		<h4>Copyright Southern Az Golden Retriever Rescue 2015</h4>
+	</div><!-- /footer -->
+	
+	<div data-role="popup" id="xxxModePopup" data-dismissible="true" data-theme="a">
+		<div data-role="header" data-theme="a">
+		<h1>Override Mode Enabled</h1>
+		</div>
+		<div data-theme="a">
+			<p>Override mode allows Administrators to make status changes for dogs, members, and adoptions that are usually made by the system. It is up to the user to make sure that all associated status changes are made, for instance if a dog is matched to an applicant make sure to update both the application and the dog.</p>
+			<a href="#" data-rel="back" data-icon="delete" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-a">I understand</a>			
+		</div>
+	</div> <!-- /popup -->
+
+	
+</div><!-- /page -->
+	
+<div data-role="page" id="settings">
+	<div data-role="header" data-position="fixed">
+		<img src="assets/img/SAGGR-DBLogo1hdr-320.gif">
+		<div data-role="navbar" data-iconpos="left" data-theme="b">
+			<ul>
+				<li><a href="#home" data-icon="back">Back</a></li>	
+				<li><a href="#home" data-icon="home">Home</a></li>	
+				<li>&nbsp;</li>
+			</ul>
+		</div><!-- /navbar -->	
+	</div><!-- /header -->
+	<div data-role="main" class="ui-content">
+		<p id="stuff"></p>
+		<form id="settingform" method="post" action="xxxx.asp">
+			<h3>Settings are not yet available</h3>
+			<p>At some point in the future you will have the ability to cusomtize your experience with this web site.</p>
+		</form>
+	</div><!-- /content -->
+	<div data-role="footer" data-position="fixed">
+		<h4>Copyright Southern Az Golden Retriever Rescue 2015</h4>
+	</div><!-- /footer -->
+</div><!-- /page -->
+<div data-role="page" id="videoPage">
+	<div data-role="header" data-position="fixed">
+		<img src="assets/img/SAGGR-DBLogo1hdr-320.gif">
+		<div data-role="navbar" data-iconpos="left" data-theme="b">
+			<ul>
+				<li><a href="#home" data-icon="back">Back</a></li>	
+				<li><a href="#home" data-icon="home">Home</a></li>	
+				<li>&nbsp;</li>
+			</ul>
+		</div><!-- /navbar -->	
+	</div><!-- /header -->
+	<div data-role="main" class="ui-content">
+		<ul data-role="listview" data-divider-theme="a" data-inset="true" data-count-theme="a" class="my-pa" style="display:none";>
+			<li><a href="https://youtu.be/863JBTGf3uU" data-icon="video" target="video">Lesson 1 Registering<span class="ui-li-count">1:56</span></a></li>
+			<li><a href="https://youtu.be/p8PQhrVKwAo" data-icon="video" target="video">Lesson 2 Sign In<span class="ui-li-count">1:55</span></a></li>
+			<li><a href="https://youtu.be/slqLb_lMz_0" data-icon="video" target="video">Lesson 3 Overview<span class="ui-li-count">11:44</span></a></li>
+			<li><a href="https://youtu.be/yXbPQqt3ZfI" data-icon="video" target="video">Lesson 4 Intake<span class="ui-li-count">4:28</span></a></li>
+			<li><a href="https://youtu.be/LKgz-zLhVnI" data-icon="video" target="video">Lesson 5 Add Profile Picture<span class="ui-li-count">2:08</span></a></li>
+			<li><a href="https://youtu.be/bMvZPoN_ow8" data-icon="video" target="video">Lesson 6 Intake for NCI<span class="ui-li-count">3:50</span></a></li>
+			<li><a href="https://youtu.be/AZgjSHlKKlM" data-icon="video" target="video">Lesson 7 Add a Member<span class="ui-li-count">4:48</span></a></li>
+			<li><a href="https://youtu.be/8s4DFyNaA-c" data-icon="video" target="video">Lesson 8 Renew Membership<span class="ui-li-count">3:12</span></a></li>
+			<li><a href="https://youtu.be/qeUT_Mzdn3U" data-icon="video" target="video">Lesson 9 Inactive Member<span class="ui-li-count">1:38</span></a></li>
+			<li><a href="https://youtu.be/kLFzX5raWYc" data-icon="video" target="video">Lesson 10 Add Application<span class="ui-li-count">10:28</span></a></li>
+			<li><a href="https://youtu.be/AmqUHkdrcXw" data-icon="video" target="video">Lesson 11 Schedule Home Visit<span class="ui-li-count">2:58</span></a></li>
+			<li><a href="https://youtu.be/iOWcWiXZbJU" data-icon="video" target="video">Lesson 12 Complete Home Visit<span class="ui-li-count">5:04</span></a></li>
+			<li><a href="https://youtu.be/YkSa7svWBj4" data-icon="video" target="video">Lesson 13 Application Approval<span class="ui-li-count">2:44</span></a></li>
+			<li><a href="https://youtu.be/uJVBz1U7hDo" data-icon="video" target="video">Lesson 14 Move Application to Shortlist<span class="ui-li-count">2:09</span></a></li>
+			<li><a href="https://youtu.be/ml4_VtaVZ9g" data-icon="video" target="video">Lesson 15 Trial Match<span class="ui-li-count">3:02</span></a></li>
+			<li><a href="https://youtu.be/Oygh4jCmwHc" data-icon="video" target="video">Lesson 16 Matched<span class="ui-li-count">2:51</span></a></li>
+			<li><a href="https://youtu.be/bBdgNk_UsJY" data-icon="video" target="video">Lesson 17 Make Application Inactive<span class="ui-li-count">2:48</span></a></li>
+			<li><a href="https://youtu.be/UhwNvlemkvc" data-icon="video" target="video">Lesson 18 Add Veterinarian<span class="ui-li-count">2:12</span></a></li>
+			<li><a href="https://youtu.be/xcGNwxX8KEE" data-icon="video" target="video">Lesson 19 Veterinarian Visit<span class="ui-li-count">5:45</span></a></li>
+		</ul>
+	</div><!-- /content -->
+	<div data-role="footer" data-position="fixed">
+		<h4>Copyright Southern Az Golden Retriever Rescue 2015</h4>
+	</div><!-- /footer -->
+</div><!-- /page -->
+<div data-role="page" id="helpPage">
+	<div data-role="header" data-position="fixed">
+		<img src="assets/img/SAGGR-DBLogo1hdr-320.gif">
+		<div data-role="navbar" data-iconpos="left" data-theme="b">
+			<ul>
+				<li><a href="#home" data-icon="back">Back</a></li>	
+				<li><a href="#home" data-icon="home">Home</a></li>	
+				<li>&nbsp;</li>
+			</ul>
+		</div><!-- /navbar -->	
+	</div><!-- /header -->
+	<div data-role="main" class="ui-content">
+			<h3>Help Topics</h3>
+			<p>SAGRR is a 501C3 non-profit, all volunteer organization, whose Mission is to rescue and re-home adoptable Golden Retrievers in Southern Arizona in safe, loving homes; thereby improving the lives of both the dog and adoptive family.</p>
+			<p>This web site enables authorized SAGRR volunteers to manage:</p>
+			<ul compact><li>Membership</li><li>Golden Retrievers</li><li>Adoptive Families</li></ul>
+			<p>The site employs <a href="#HelpRoles">role based security</a> to enable volunteers to work within their assigned boundaries. Your role is set by a site Administrator when you sign up.</p>
+			<h3>Site Organization</h3>
+			<p>The site is divided into two main sections:</p>
+			<ul><li>Action Required - this provides focus on the members, dogs, and applicants that require some attention</li>
+			<ul compact><li> Active Dogs - manage the dogs that have not yet been settled in a permanent home</li>
+			<li>Active Applications - manage the adoptive families that have not yet been permanently matched to a Golden.</li>
+			<li>Dog Follow-ups - Watch for expiring vaccinations, upcoming vet visits, see which dogs are on Medical or Behavior hold</li>
+			<li>Membership Renewals - Watch for expiring memberships or new members</li>
+			</ul>
+			<li>All Records - provides access to all members, dogs, and applicants primarily for historical purposes</li>
+			<ul compact><li>Dogs - records for all the dogs grouped by status</li>
+			<li>Applications - records for all adoptive families grouped by status.</li>
+			<li>Members - records for all members grouped in a number of ways</li>
+			<li>Veterinarians - a list of all the vets that SAGRR has used</li>
+			<li>Teams & Interests - provides a simple way to look for members that have certain expressed interests, they can then be assigned to a team. There are two teams that must have at least one member:</li>
+			<ul compact><li>Home Visit - Members on this team can be assigned to perform a home visit for new applicant's</li>
+			<li>Intake - Members on this team are responsible for new Golden's until they reach at least a temporary foster situation</li>
+			</ul>
+			</ul>			
+			</ul>
+			<h3>Application Process Flow</h3>
+			<p>Some of the application <a href="https://www.lucidchart.com/documents/view/4f6b4179-3b60-4560-90e3-8737bb646f89" target="_blank">process flow</a> is automated by this web site, but there are several steps that require volunteer action: <span style="font-size:smaller">(click <a href="https://www.lucidchart.com/publicSegments/view/69fc0222-c118-470f-a2e9-e470a1313b28">here</a> to download pdf of Applicant Flow)</span></p>
+			<ul compact>
+			<li>Receive a new application - an application from an adoptive family is received by email or US mail.</li>
+			<li>Draft - a volunteer uses the "Start New Dog Intake" process in the "Active Dogs" section of this site, the application will stay in draft until the application entry is finished. Once the application is finished the site will place the application into the "New Request" state.</li>
+			<li>New Request - a volunteer will make arrangements for a volunteer to perform a Home Visit, they will then update the application status to move it "Schedule Home Visit" status.</li>
+			<li>Schedule Home Visit - the selected Home Visit volunteer will schedule and then perform a home visit. Once complete they will update the application to "Home Visit Complete" status.</li>
+			<li>Home Visit Complete - this is a holding status to allow a volunteer to ensure that all the necessary information has been collected to ensure that decision can be made on this application.</li>
+			<li>Decision Review - a volunteer with approval authority, will review the application and either approve or not approve. If approved it will be automatically moved to Approved Waitlist status</li> 
+			<li>Approved WaitList - the application will stay in this status until the family is matched with a Golden or they withdraw, go inactive, or obtain a dog from another source (DFOS).</li>
+			<li>Approved ShortList - generally there are many more applicants than dogs, volunteers trying to find matches can place eager applicants into this status to allow them to focus on those that are ready now</li>
+			<li>Match Trial - when a possible match has been made, the site will place the applicant into this status</li>
+			<li>Matched Foster - when a foster or potential foster to adopt match has been made, the site will place the applicant into this status</li>
+			<li>Matched Adopt - when an adoption has been finalized, the site will place the applicant into this state and the record is marked complete.</li>
+			</ul>
+			<p>There are a few exception states that applicants can be placed into</p>
+			<ul compact>
+			<li>Application Withdrawn - an applicant indicated that they want to withdraw, the record will remain open for one year after which time it is closed and can't be re-opened.</li>
+			<li>Dog From Other Source - an applicant indicates that they found another dog, it is handled exactly like an application withdrawal.</li> 
+			<li>Application on Hold - an application can be placed On Hold at anytime up through Decision. If there is something holding up the timely processing than it can be placed On Hold. When it comes off of hold it goes back to it's prior status.</li>
+			<li>Inactive - an <i>approved</i> application can be moved Inactive if they are not ready to be matched at this time. It will remain in the system indefinitely, when they are ready they are moved back to Approved Waitlist</li>
+			<li>Not Approved - a not approved application cannot be reopened.</li>
+			</ul>
+			<h3>Receiving a new Golden</h3>
+			<p>Start the Intake process for a new golden by first clicking on "Active Dogs" and then click "Start New Dog Intake".
+			Complete the initial intake form then click the Save button in the upper right corner. A record for the dog has now been created.</p>
+			<p>After hitting the Save button you will be on the newly created dog's record page. From here you can enter in Medical Information, Behaviors and Attributes, and any notes that you think pertinent.</p>
+			<p>You can also attach media to the record, so you can upload photos, scans, pdf, excel or word documents.</p>
+			<p>If you have a smart phone (iphone or Android) or tablet, you can use the camera to take a picture of the Golden for it's profile. If you don't, then you can always just upload a photo from your computer.</p>
+			<h3>Adding a new adoptive family</h3>
+			<p>Click on "Applications" then "Active", in the upper right corner is a "New Application" button. When you click it a new row is added to the top of the list, it will be <b>LastName, FirstName</b>. Click on this entry and you 
+			will be taken to the application record for this new adoptive family. You should see <b>Application <span style="color:#FF7171">Incomplete!</span></b> on the page.</p>
+			<p>First click on <b>LastName, FirstName</b> and enter the applicant's contact information and press Save and go Back.<p>
+			<p>Second click on <b>Application <span style="color:#FF7171">Incomplete!</span></b> and fill in all the sections of the application. You don't have to complete all sections in a single session, the application will remain in Draft until you can get back to it.</p>
+			<p>The site will detect when all application sections have been completed and will automatically move it from Draft to New Request</p>
+			<h3>Adding a new member</h3>
+			<p>There are two ways to create a member record:</p>
+			<ol compact><li>Create a member record from an applicant</li>
+			<li>Manually add a member</li>
+			</ol>
+			<h4>Create Member Record from an Applicant</h4>
+			<p>From the applicant page press either the "Create New" or the "Link Existing". Create New is used if the applicant <b>is not</b> a current member. Link Existing is used if the applicant <b>is</b> a current member, you will be presented with a list of all members, locate the associated member record and click on it.</p>
+			<h4>Create Member Record Manually</h4>
+			<p>Click on "Members" then "All Members", in the upper right corner is a "Add Member" button. When you click it a new row is added to the top of the list, it will be <b>LastName, FirstName</b>. Click on this entry and you 
+			will be taken to the member record for this new member. </p>
+			<p>First click on <b>LastName, FirstName</b> and enter the member's contact information and press Save and go Back.<p>
+			<p>Next click on Membership and fill in whatever information you know</p>
+			<p>You can now enter in Special Skills/Other Information, Company and Member's Interests</p>
+			<div data-role="footer" data-position="fixed">
+		<h4>Copyright Southern Az Golden Retriever Rescue 2015</h4>
+	</div><!-- /footer -->
+</div><!-- /page -->
+<div data-role="page" id="helpRoles">
+	<div data-role="header" data-position="fixed">
+		<img src="assets/img/SAGGR-DBLogo1hdr-320.gif">
+		<div data-role="navbar" data-iconpos="left" data-theme="b">
+			<ul>
+				<li><a href="#helpPage" data-icon="back">Back</a></li>	
+				<li>&nbsp;</li>	
+				<li>&nbsp;</li>
+			</ul>
+		</div><!-- /navbar -->	
+	</div><!-- /header -->
+	<div data-role="main" class="ui-content">
+			<h3>User Roles</h3>		
+<p>By default, all users have read only access to the database. An administrator will assign user permissions based upon the role that the user will be performing. A user can have several permissions assigned.</p>
+<ul compact>
+Dog – Dog records can be updated
+Members  - Member records can be updated
+Applicant – Applicant records (applications) can be updated
+Approval – An applicant can be approved to receive a golden
+Dog Assignment – Can assign a dog to an applicant or member, also requires dog, member, and applicant permissions
+Administrator – Performs user and DB administration; accept new users, modify permissions, lock out users, enter Override mode to manually make status changes. 
+</ul>		
+	<div data-role="footer" data-position="fixed">
+		<h4>Copyright Southern Az Golden Retriever Rescue 2015</h4>
+	</div><!-- /footer -->
+</div><!-- /page -->
+<div data-role="page" id="errorTrap">
+	<div data-role="header" data-position="fixed">
+		<img src="assets/img/SAGGR-DBLogo1hdr-320.gif">
+		<div data-role="navbar" data-iconpos="left">
+			<ul>
+				<li><a href="#" data-icon="">-</a></li>	
+				<li><a href="#" data-icon="">-</a></li>
+				<li><a href="#" data-icon="">-</a></li>
+			</ul>
+		</div><!-- /navbar -->		
+	</div><!-- /header -->
+	<div data-role="main" class="ui-content">
+		<h3>Authorization Error</h3>
+		<p>A critical error occurred during user authorization. The most probable cause is that the SAGRR database is down.</p>
+		<p>You should try refreshing your web browser, if this doesn't work then you will need to wait for the database to come back on line.</p>
+		<p>If the problem persists for more than 2 hours then please report the following error condition:</p>
+		<p class="myErrMsg"><span id="errorTrapMsg"></span></p>
+	</div><!-- /content -->
+	<div data-role="footer" data-position="fixed">
+		<h4>Copyright Southern Az Golden Retriever Rescue 2015</h4>
+	</div><!-- /footer -->
+</div><!-- /page -->
+<!-- Level 3 menus -->
+<!-- Keep google authentication here, it gives time for pages and scripts to all load -->
+<script src="https://apis.google.com/js/platform.js?onload=renderButton" async defer></script>	
+</body>
+		
+</html>

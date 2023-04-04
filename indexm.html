@@ -1,0 +1,41 @@
+<!DOCTYPE html> 
+<html> 
+	<head> 
+	<title>Southern Az Golden Retriever Rescue</title> 
+	<meta charset="utf-8">
+	<meta name="mobile-web-app-capable" content="yes">	
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">		
+	<meta name="viewport" content="width=device-width, initial-scale=1"> 
+	<meta name="google-signin-client_id" content="943166248101-qqm7bsj2tisaje1cplcqmaekd7746hhk.apps.googleusercontent.com">	
+	<script>
+		var objUser = {id : '', userid : '', email : '', name : '', imgURL : '', Options : {}};
+		/* Google authentication */
+		function onSignIn(googleUser) {
+		console.debug('signin',googleUser);
+		  var profile = googleUser.getBasicProfile();
+		  objUser.id = profile.getId();													// Do not send to your backend! Use an ID token instead.
+		  objUser.email = profile.getEmail();
+		  objUser.name = profile.getName();
+//		  objUser.imgURL = profile.getImageUrl();
+		  objUser.userid = profile.getEmail().replace(/@.*$/,'');
+		  console.log(objUser); 												
+		}	
+		function signOut() {
+		var auth2 = gapi.auth2.getAuthInstance();
+		auth2.signOut().then(function () {
+		  console.log('User signed out.');
+		});
+		}
+		
+	</script>
+	</head>
+<body>	
+	<div>
+		<div class="g-signin2" data-onsuccess="onSignIn"></div>
+	</div>
+	<!-- Keep google authentication here, it gives time for pages and scripts to all load -->
+<script src="https://apis.google.com/js/platform.js?onload=renderButton" async defer></script>	
+</body>
+		
+</html>
