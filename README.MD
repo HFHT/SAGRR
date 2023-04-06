@@ -5,6 +5,7 @@
 [x] Test saveAdopt, saveAdoption, memSpawn, ListGroup, filterApp
 [ ] functions - $password not defined 
 [x] Dog - click on Family and it hangs
+[ ] Make sure to remove quotes that are in the text boxes
 
 $oneMonthOn = new DateTime();
 $oneMonthOn->add(new DateInterval('P30D'));

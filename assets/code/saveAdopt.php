@@ -12,11 +12,11 @@ $error_sql = '';
 $id = "0";
 $f0D = '';
 if (isset($_POST['step'])) {
-	$id = filter_input(INPUT_POST, 'v', FILTER_SANITIZE_STRING);
+	$id = filter_input(INPUT_POST, 'v', FILTER_UNSAFE_RAW);
 	$formSave = str_replace("'","''",$_POST['formData']);
 	$f0D =  str_replace("'","''",$_POST['formDataS0']);
 	$f0D = "applSec0='".$f0D."', ";
-	$step = filter_input(INPUT_POST, 'step', FILTER_SANITIZE_STRING);
+	$step = filter_input(INPUT_POST, 'step', FILTER_UNSAFE_RAW);
 	$prep_stmt = "SELECT applProgress,applComplete,applStatus FROM Applications WHERE applid=$id";
 	$result = $mysqli->query($prep_stmt);
 	$row = $result->fetch_assoc();
